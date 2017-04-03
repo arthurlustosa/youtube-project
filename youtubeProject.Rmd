@@ -1,0 +1,121 @@
+---
+title: "YouTubeProject"
+author: "Arthur Lustosa de Souza"
+date: "2 de abril de 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+#instalando pacote do youtube 
+#install.packages("tuber")
+#versao mais atualizada do pacote do youtube
+devtools::install_github("soodoku/tuber", build_vignettes = TRUE)
+
+#carregando bibliotecas necessárias
+library(tuber)
+```
+
+```{r, echo=F}
+#autenticando com youtube 
+yt_oauth(app_id = "75896210182-3rmjt1ejj59q3hf51dakpd41pn1mdv8e.apps.googleusercontent.com",
+        app_secret = "E9UO47eqk_21CkUfJcRJu3fB")
+```
+
+```{r}
+#carregando biblitotecas extras
+library(dplyr) 
+library(tibble)
+library(lubridate)
+library(purrr)
+library(ggplot2)
+library(tidyr)
+```
+
+
+```{r}
+get_videos_joutjout <- function(dates) {
+  
+  yt_search(term = "", 
+            type = "video",
+            channel_id = "UCbE7YGLZ-VY0oCgIsCSJ5Sg",
+            published_after = dates$start,
+            published_before = dates$end)
+  
+
+}
+
+
+dates_JJ <- tibble(start = seq(ymd("2012-01-01"), ymd("2017-01-01"), by = "years"),
+                        end = seq(ymd("2012-12-31"), ymd("2017-12-31"), by = "years")) %>% 
+  mutate(start = paste(start, "T0:00:00Z", sep = ""),
+         end = paste(end, "T0:00:00Z", sep = ""))
+
+videos_JJ <- by_row(.d = dates_JJ, ..f = get_videos_joutjout, .to = "videos_info")
+```
+
+
+
+```{r}
+#pegando estatísticas dos vídeos
+get_videos_stats <- function(df_row) {
+  
+  get_stats(video_id = df_row$video_id)
+}
+
+dados_JJ <- bind_rows(videos_JJ$videos_info) %>% 
+  select(title, publishedAt, video_id) %>%
+  by_row(..f = get_videos_stats, .to = "videos_stats")
+```
+
+```{r}
+#gerando visualizações
+
+
+#numero de views
+dados_JJ %>% 
+  mutate(views = map(videos_stats, .f = 'viewCount')) %>% 
+  unnest(views) %>% 
+  mutate(views = as.numeric(views),
+         publishedAt = as_date(publishedAt)) %>% 
+  ggplot(aes(x = publishedAt, y = views)) +
+  geom_line(aes(y = 1000000, colour = "1 Milhão")) +
+  geom_line() +
+  labs(x = "Data de publicação", y = "Visualizações") +
+  theme_bw()
+
+
+#numero de likes vs dislikes
+dados_JJ %>% 
+  mutate(likes = map(videos_stats, .f = 'likeCount'),
+         dislikes = map(videos_stats, .f = 'dislikeCount')) %>% 
+  unnest(likes, dislikes) %>% 
+  mutate(likes = as.numeric(likes),
+         dislikes = as.numeric(dislikes),
+         publishedAt = as_date(publishedAt),
+         prop = likes/dislikes) %>% 
+  ggplot(aes(x = publishedAt)) +
+  geom_line(aes(y = prop)) +
+  labs(x = "Data de publicação", y = "Likes/Dislikes") +
+  theme_bw()
+```
+
+```{r}
+#utilizando Plotly
+library(plotly)
+packageVersion('plotly')
+
+pjj <- dados_JJ %>% 
+  mutate(views = map(videos_stats, .f = 'viewCount')) %>% 
+  unnest(views) %>% 
+  mutate(views = as.numeric(views),
+         publishedAt = as_date(publishedAt))
+
+
+
+
+p <- plot_ly(pjj, x = ~publishedAt, y = ~views, name = 'views', type = 'scatter', mode = 'lines',  text = ~paste("Título: ", title)) %>%
+  add_trace(y = ~views, name = 'Views', mode = 'markers')
+
+p
+```
+
