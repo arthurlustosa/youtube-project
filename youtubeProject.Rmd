@@ -215,6 +215,10 @@ adele <- dados_adele %>%
 
 divas_pop <- rbind(gaga, rihanna, beyonce, kattyPerry, brineySpears, madonna, adele)
 
+divas_pop <- divas_pop %>%
+  select(Nome, title, publishedAt, video_id, views)
+write.csv(divas_pop, "divas_pop.csv", row.names = F)
+
 p <- plot_ly(kattyPerry, x = publishedAt, y = views, name = 'views', type = 'scatter', size=views,  mode = 'markers',  text = paste("Titulo: ", title)) 
 
 p
