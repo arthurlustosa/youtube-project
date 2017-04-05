@@ -45,6 +45,9 @@ library(tidyr)
 # BritneySpears_VEVO: "UCZijND2e2tPp2AQL8Go2YSg" Start: 2009
 # Madonna_VEVO:"UCmQmc-Y4N9btVMUS1BfnyDw" Start: 2012
 # Adele_VEVO: "UComP_epzeKzvBX156r6pm1Q" Start: 2009
+# TaylorSwift_VEVO: "UCANLZYMidaCbLQFWXBC95Jg"
+# DomiLovato_VEVO: "UCnyB9MYKRkSFK3IIB32CoVw"
+# ArianaGrande_VEVO: "UC0VOyT2OCBKdQhF3BAbZ-1g"
 
 get_videos <- function(dates, id_channel) {
   
@@ -70,6 +73,9 @@ videos_katyPerry <- by_row(.d = dates, "UC-8Q-hLdECwQmaWNwXitYDw", ..f = get_vid
 videos_britney <- by_row(.d = dates, "UCZijND2e2tPp2AQL8Go2YSg", ..f = get_videos, .to = "videos_info")
 videos_madonna <- by_row(.d = dates, "UCmQmc-Y4N9btVMUS1BfnyDw", ..f = get_videos, .to = "videos_info")
 videos_adele <- by_row(.d = dates, "UComP_epzeKzvBX156r6pm1Q", ..f = get_videos, .to = "videos_info")
+videos_taylor <- by_row(.d = dates, "UCANLZYMidaCbLQFWXBC95Jg", ..f = get_videos, .to = "videos_info")
+videos_demi <- by_row(.d = dates, "UCnyB9MYKRkSFK3IIB32CoVw", ..f = get_videos, .to = "videos_info")
+videos_ariana <- by_row(.d = dates, "UC0VOyT2OCBKdQhF3BAbZ-1g", ..f = get_videos, .to = "videos_info")
 ```
 
 
@@ -104,6 +110,18 @@ dados_madonna <- bind_rows(videos_madonna$videos_info) %>%
   by_row(..f = get_videos_stats, .to = "videos_stats")
 
 dados_adele <- bind_rows(videos_adele$videos_info) %>% 
+  select(title, publishedAt, video_id) %>%
+  by_row(..f = get_videos_stats, .to = "videos_stats")
+
+dados_taylor <- bind_rows(videos_taylor$videos_info) %>% 
+  select(title, publishedAt, video_id) %>%
+  by_row(..f = get_videos_stats, .to = "videos_stats")
+
+dados_demi <- bind_rows(videos_demi$videos_info) %>% 
+  select(title, publishedAt, video_id) %>%
+  by_row(..f = get_videos_stats, .to = "videos_stats")
+
+dados_ariana <- bind_rows(videos_ariana$videos_info) %>% 
   select(title, publishedAt, video_id) %>%
   by_row(..f = get_videos_stats, .to = "videos_stats")
 ```
@@ -213,14 +231,67 @@ adele <- dados_adele %>%
          publishedAt = as_date(publishedAt),
          Nome = 'Adele')
 
-divas_pop <- rbind(gaga, rihanna, beyonce, kattyPerry, brineySpears, madonna, adele)
+taylor <- dados_taylor %>% 
+  mutate(views = map(videos_stats, .f = 'viewCount')) %>% 
+  unnest(views )%>% 
+  mutate(views = as.numeric(views),
+         publishedAt = as_date(publishedAt),
+         Nome = 'Taylor Swift')
 
-divas_pop <- divas_pop %>%
-  select(Nome, title, publishedAt, video_id, views)
-write.csv(divas_pop, "divas_pop.csv", row.names = F)
+demi <- dados_demi %>% 
+  mutate(views = map(videos_stats, .f = 'viewCount')) %>% 
+  unnest(views )%>% 
+  mutate(views = as.numeric(views),
+         publishedAt = as_date(publishedAt),
+         Nome = 'Demi Lovato')
 
-p <- plot_ly(kattyPerry, x = publishedAt, y = views, name = 'views', type = 'scatter', size=views,  mode = 'markers',  text = paste("Titulo: ", title)) 
+ariana <- dados_ariana %>% 
+  mutate(views = map(videos_stats, .f = 'viewCount')) %>% 
+  unnest(views )%>% 
+  mutate(views = as.numeric(views),
+         publishedAt = as_date(publishedAt),
+         Nome = 'Ariana Grande')
 
-p
+divas_pop <- rbind(gaga, rihanna, beyonce, kattyPerry, brineySpears, madonna, adele, taylor, demi, ariana)
+
+#divas_pop <- divas_pop %>%
+#  select(Nome, title, publishedAt, video_id, views)
+#write.csv(divas_pop, "divas_pop.csv", row.names = F)
+
+
+resume_divas_pop <-  divas_pop %>%
+  unnest(views) %>% 
+  mutate(views = as.numeric(views),
+         ano =  as.numeric( format( as.Date( publishedAt, origin='1900-1-1'), '%Y')),
+         publishedAt = as_date(publishedAt)) %>% 
+  group_by(Nome, ano) %>%
+  summarise(total_views = sum(views)) %>%
+  mutate(ano = as.character(ano))
+  
+  
+  
+  
+ggplot(resume_divas_pop, aes(x = ano, y = total_views, group = Nome, colour = Nome)) +
+  geom_line() +
+  geom_point() +
+  geom_path(alpha = 0.5) +
+  labs(x = "Ano", y = "Número de Views") +
+  theme_bw()
+
+
+divas_line_chart <- plot_ly(resume_divas_pop, x = ano, y = total_views, name = 'views', type = 'line', group = Nome,  mode = 'line',  text = paste("Diva: ", Nome))  %>%
+  layout(title = "Resumo Divas Pop - Nº views no YouTube por Ano", 
+         xaxis = list(title="Ano"),
+         yaxis = list(title="Nº de Views"))
+
+divas_line_chart
+
+
+divas_bouble_chart <- plot_ly(resume_divas_pop, x = ano, y = total_views, size = total_views, group = Nome,  mode = 'markers', text = paste("Diva: ", Nome))  %>%
+  layout(title = "Resumo Divas Pop - Nº views no YouTube por Ano", 
+         xaxis = list(title="Ano"),
+         yaxis = list(title="Nº de Views"))
+
+divas_bouble_chart
 ```
 
