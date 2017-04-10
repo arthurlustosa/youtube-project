@@ -419,10 +419,11 @@ videos_stats_DivasPop <- rbind(
           videos_stats_Mariah
         )
 
-divas_pop <- videos_stats_DivasPop %>%
-  select(Nome, title, publishedAt, video_id, views)
-write.csv(divas_pop, "divas_pop.csv", row.names = F)
-write.csv(resume_divas_pop, "resume_divas_pop.csv", row.names = F)
+#divas_pop <- videos_stats_DivasPop %>%
+#  select(Nome, title, publishedAt, video_id, views)
+#write.csv(divas_pop, "divas_pop.csv", row.names = F)
+#write.csv(resume_divas_pop, "resume_divas_pop.csv", row.names = F)
+# write.csv(channels_info_geral, "channels_info_geral.csv", row.names = F)
 
 resume_divas_pop <- videos_stats_DivasPop %>%options(scipen=999)
   select(Nome, publishedAt, views) %>%
