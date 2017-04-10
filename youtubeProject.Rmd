@@ -5,6 +5,18 @@ date: "2 de abril de 2017"
 output: html_document
 ---
 
+Todo mundo é viciado em música pop, ou conhece alguém que seja! Seja você fã ou apenas um curioso, já se perguntou quem é a maior diva pop de todos os tempos? Muitos diriam que a resposta é simples e pode ser encontrada nessas listas divulgadas por rádio ou revistas de música, mas dai nos questionamos, de onde vem os dados dessas listas?
+
+Analisando os últimos lançamento do mundo pop, fiquei curioso para tentar encontrar uma boa resposta para essa pergunta, e para isso decidi analisar os dados da maior plataforma de vídeos da internet, o YouTube. A ideia é coletar os dados dos canais dessas artistas e comparar os resultados com alguns desses rankings divulgados pelas rádios e revistas. E como saber quem são as artistas mais badaladas do mundo? Escolhi a listas da **Billboard:** *Top Artists Female* e da **Forbes:** *Highest-Paid Women in Music*, para embasar minha pesquisa. Analisei quem são as divas que aparece nas duas listas e fiz a coleta dos seus dados.
+
+Desde 2014 a Billboard lança um ranking anual das Top Artists Female, que resume as divas pop do determinado ano. A classificação deles é montada a partir da audiência que os artistas coletados pela **Nielsen Music** (para saber mais sobre eles clique [aqui] (http://www.nielsen.com/us/en/about-us.html) ) e dados dos streaming de música on-line. Já a Forbes, lança anualmente um ranking das artistas mais bem pagas. (*Its about money!*) O papo agora é se a fortuna das divas refletem sua popularidade no YouTube.
+
+Mesmo sendo um little monster fiel, tenho que ser um analista imparcial e procurar a melhor forma de descobrir qual a maior diva pop de todos os tempos. Fiz um scraper de informações nos canais oficiais das maiores cantoras, segundo as listas descritas acima, e montei algumas visualizações que me ajudaram a ter uma resposta mais elaborada para essa pergunta. 
+
+Para capturar os dados do youtube utilizei como tutorial uma análise feita por Willian, disponível no site curso-r.com, sobre o canal Porta dos Fundos. Abaixo segue o passo a passo que o Willian fez, com algumas modificações minhas.
+
+Para montarmos nosso dataset precisamos dos dados dos canais das artistas. Utilizarei o pacote tube r que permite acessar a API do YouTube utilizando o R. Assim, teremos acesso a diversas estatísticas como número de likes, quantidade de views, comentários e etc.
+
 ```{r setup, include=FALSE}
 #instalando pacote do youtube 
 #install.packages("tuber")
@@ -35,19 +47,31 @@ library(tidyr)
 
 
 ```{r}
-
-# JoutJout: "UCbE7YGLZ-VY0oCgIsCSJ5Sg"
-
-# LadyGaga_VEVO: "UC07Kxew-cMIaykMOkzqHtBQ" Start: 2009
-# Beyonce_VEVO: "UC9zX2xZIJ4cnwRsgBpHGvMg" Start: 2009
-# Rihanna_VEVO: "UC2xskkQVFEpLcGFnNSLQY0A" Start: 2009
-# KatyPerry_VEVO: "UC-8Q-hLdECwQmaWNwXitYDw" Start: 2008
-# BritneySpears_VEVO: "UCZijND2e2tPp2AQL8Go2YSg" Start: 2009
-# Madonna_VEVO:"UCmQmc-Y4N9btVMUS1BfnyDw" Start: 2012
-# Adele_VEVO: "UComP_epzeKzvBX156r6pm1Q" Start: 2009
+# LadyGaga_VEVO: "UC07Kxew-cMIaykMOkzqHtBQ" 
+# Beyonce_VEVO: "UC9zX2xZIJ4cnwRsgBpHGvMg" 
+# Rihanna_VEVO: "UC2xskkQVFEpLcGFnNSLQY0A" 
+# KatyPerry_VEVO: "UC-8Q-hLdECwQmaWNwXitYDw" 
+# BritneySpears_VEVO: "UCZijND2e2tPp2AQL8Go2YSg" 
+# Madonna_VEVO:"UCmQmc-Y4N9btVMUS1BfnyDw" 
+# Adele_VEVO: "UComP_epzeKzvBX156r6pm1Q"
 # TaylorSwift_VEVO: "UCANLZYMidaCbLQFWXBC95Jg"
-# DomiLovato_VEVO: "UCnyB9MYKRkSFK3IIB32CoVw"
 # ArianaGrande_VEVO: "UC0VOyT2OCBKdQhF3BAbZ-1g"
+# IggyAzalea_VEVO: "UCcdOEjqjiVAnUtEFZIRTlHg"
+# MileyCyrus_VEVO: "UCdI8evszfZvyAl2UVCypkTA"
+# Lord_VEVO: "UCVrPiUtl29kULN2HIAm244Q"
+# NickiMinaj_VEVO: "UCaum3Yzdl3TbBt8YUeUGZLQ"
+# MeghanTrainor_VEVO: "UCf3cbfAXgPFL6OywH7JwOzA"
+# SelenaGomez_VEVO: "UCjK8ORC71kwyj1DWFwril_A"
+# EllieGoulding_VEVO: "UCvu362oukLMN1miydXcLxGg"
+# ToveLo_VEVO: "UC0sVahwZgKFHjOBaxvm-a7Q"
+# Sia_VEVO: "UCmKdSrwf1e8coqAzUsrVHZw"
+# CarrieUnderwood_VEVO: "UCKTgj8r-wp80wJgDxhc6jpA"
+# AlessiaCara_VEVO: "UC1EwyHfJHEKnA7kKfcGhlIw"
+# Pink_VEVO: "UCXJDX1KK6t121Z9FLhu5o2A"
+# JenniferLopez_VEVO:"UCx1f1u4XlFFr0YgqF3wB4lQ"
+# CelineDion_VEVO: "UCh6C5LG14uZKmwCgGxf-nDQ"
+# MariahCarrey: "UClS0wn3LPs9jdX_yt2g1k8w"
+
 
 get_videos <- function(dates, id_channel) {
   
@@ -58,8 +82,6 @@ get_videos <- function(dates, id_channel) {
             published_before = dates$end)
   
 }
-
-
 
 dates <- tibble(start = seq(ymd("2008-01-01"), ymd("2017-01-01"), by = "years"),
                         end = seq(ymd("2008-12-31"), ymd("2017-12-31"), by = "years")) %>% 
@@ -74,8 +96,23 @@ videos_britney <- by_row(.d = dates, "UCZijND2e2tPp2AQL8Go2YSg", ..f = get_video
 videos_madonna <- by_row(.d = dates, "UCmQmc-Y4N9btVMUS1BfnyDw", ..f = get_videos, .to = "videos_info")
 videos_adele <- by_row(.d = dates, "UComP_epzeKzvBX156r6pm1Q", ..f = get_videos, .to = "videos_info")
 videos_taylor <- by_row(.d = dates, "UCANLZYMidaCbLQFWXBC95Jg", ..f = get_videos, .to = "videos_info")
-videos_demi <- by_row(.d = dates, "UCnyB9MYKRkSFK3IIB32CoVw", ..f = get_videos, .to = "videos_info")
 videos_ariana <- by_row(.d = dates, "UC0VOyT2OCBKdQhF3BAbZ-1g", ..f = get_videos, .to = "videos_info")
+videos_iggy <- by_row(.d = dates, "UCcdOEjqjiVAnUtEFZIRTlHg", ..f = get_videos, .to = "videos_info")
+videos_miley <- by_row(.d = dates, "UCdI8evszfZvyAl2UVCypkTA", ..f = get_videos, .to = "videos_info")
+videos_lord <- by_row(.d = dates, "UCVrPiUtl29kULN2HIAm244Q", ..f = get_videos, .to = "videos_info")
+videos_nicki <- by_row(.d = dates, "UCaum3Yzdl3TbBt8YUeUGZLQ", ..f = get_videos, .to = "videos_info")
+videos_meghan <- by_row(.d = dates, "UCf3cbfAXgPFL6OywH7JwOzA", ..f = get_videos, .to = "videos_info")
+videos_selena <- by_row(.d = dates, "UCjK8ORC71kwyj1DWFwril_A", ..f = get_videos, .to = "videos_info")
+videos_ellie <- by_row(.d = dates, "UCvu362oukLMN1miydXcLxGg", ..f = get_videos, .to = "videos_info")
+videos_toveLo <- by_row(.d = dates, "UC0sVahwZgKFHjOBaxvm-a7Q", ..f = get_videos, .to = "videos_info")
+videos_sia <- by_row(.d = dates, "UCmKdSrwf1e8coqAzUsrVHZw", ..f = get_videos, .to = "videos_info")
+videos_carrie <- by_row(.d = dates, "UCKTgj8r-wp80wJgDxhc6jpA", ..f = get_videos, .to = "videos_info")
+videos_alessia <- by_row(.d = dates, "UC1EwyHfJHEKnA7kKfcGhlIw", ..f = get_videos, .to = "videos_info")
+videos_pink <- by_row(.d = dates, "UCXJDX1KK6t121Z9FLhu5o2A", ..f = get_videos, .to = "videos_info")
+videos_jlo <- by_row(.d = dates, "UCx1f1u4XlFFr0YgqF3wB4lQ", ..f = get_videos, .to = "videos_info")
+videos_celine <- by_row(.d = dates, "UCh6C5LG14uZKmwCgGxf-nDQ", ..f = get_videos, .to = "videos_info")
+videos_mariah <- by_row(.d = dates, "UClS0wn3LPs9jdX_yt2g1k8w", ..f = get_videos, .to = "videos_info")
+
 ```
 
 
@@ -124,174 +161,304 @@ dados_demi <- bind_rows(videos_demi$videos_info) %>%
 dados_ariana <- bind_rows(videos_ariana$videos_info) %>% 
   select(title, publishedAt, video_id) %>%
   by_row(..f = get_videos_stats, .to = "videos_stats")
+
+dados_iggy <- bind_rows(videos_iggy$videos_info) %>% 
+  select(title, publishedAt, video_id) %>%
+  by_row(..f = get_videos_stats, .to = "videos_stats")
+
+dados_miley <- bind_rows(videos_miley$videos_info) %>% 
+  select(title, publishedAt, video_id) %>%
+  by_row(..f = get_videos_stats, .to = "videos_stats")
+
+dados_lord <- bind_rows(videos_lord$videos_info) %>% 
+  select(title, publishedAt, video_id) %>%
+  by_row(..f = get_videos_stats, .to = "videos_stats")
+
+dados_nicki <- bind_rows(videos_nicki$videos_info) %>% 
+  select(title, publishedAt, video_id) %>%
+  by_row(..f = get_videos_stats, .to = "videos_stats")
+
+dados_meghan <- bind_rows(videos_meghan$videos_info) %>% 
+  select(title, publishedAt, video_id) %>%
+  by_row(..f = get_videos_stats, .to = "videos_stats")
+
+dados_selena <- bind_rows(videos_selena$videos_info) %>% 
+  select(title, publishedAt, video_id) %>%
+  by_row(..f = get_videos_stats, .to = "videos_stats")
+
+dados_selena <- bind_rows(videos_selena$videos_info) %>% 
+  select(title, publishedAt, video_id) %>%
+  by_row(..f = get_videos_stats, .to = "videos_stats")
+
+dados_ellie <- bind_rows(videos_ellie$videos_info) %>% 
+  select(title, publishedAt, video_id) %>%
+  by_row(..f = get_videos_stats, .to = "videos_stats")
+
+dados_tovelo <- bind_rows(videos_toveLo$videos_info) %>% 
+  select(title, publishedAt, video_id) %>%
+  by_row(..f = get_videos_stats, .to = "videos_stats")
+
+dados_sia <- bind_rows(videos_sia$videos_info) %>% 
+  select(title, publishedAt, video_id) %>%
+  by_row(..f = get_videos_stats, .to = "videos_stats")
+
+dados_carrie <- bind_rows(videos_carrie$videos_info) %>% 
+  select(title, publishedAt, video_id) %>%
+  by_row(..f = get_videos_stats, .to = "videos_stats")
+
+dados_alesia <- bind_rows(videos_alessia$videos_info) %>% 
+  select(title, publishedAt, video_id) %>%
+  by_row(..f = get_videos_stats, .to = "videos_stats")
+
+dados_pink <- bind_rows(videos_pink$videos_info) %>% 
+  select(title, publishedAt, video_id) %>%
+  by_row(..f = get_videos_stats, .to = "videos_stats")
+
+dados_jlo <- bind_rows(videos_jlo$videos_info) %>% 
+  select(title, publishedAt, video_id) %>%
+  by_row(..f = get_videos_stats, .to = "videos_stats")
+
+dados_celine <- bind_rows(videos_celine$videos_info) %>% 
+  select(title, publishedAt, video_id) %>%
+  by_row(..f = get_videos_stats, .to = "videos_stats")
+
+dados_mariah <- bind_rows(videos_mariah$videos_info) %>% 
+  select(title, publishedAt, video_id) %>%
+  by_row(..f = get_videos_stats, .to = "videos_stats")
+
 ```
 
 
 ```{r}
-#gerando visualiza??es
-#numero de views
-dados_rihanna %>% 
-  mutate(views = map(videos_stats, .f = 'viewCount')) %>% 
-  unnest(views) %>% 
-  mutate(views = as.numeric(views),
-         publishedAt = as_date(publishedAt)) %>% 
-  ggplot(aes(x = publishedAt, y = views)) +
-  geom_line(aes(y = 100000000, colour = "10 Milhão")) +
-  geom_line(aes(y = 5000000, colour = "5 Milhão")) +
-  geom_line() +
-  labs(x = "Data de publiçãoo", y = "Visualizações") +
-  theme_bw()
+#channel info
+library(httr) # funções de requisições http
 
-```
+yt_check_token <- function() {
+
+	app_token = getOption('google_token')
+    if (is.null(app_token)) stop("Please get a token using yt_oauth().\n")
+
+}
+
+tuber_GET <- 
+function(path, query, ...) {
+
+	yt_check_token()
+
+	req <- GET("https://www.googleapis.com", path=paste0("youtube/v3/", path), query=query, config(token = getOption("google_token")), ...)
+	
+	tuber_check(req)
+	res <- content(req)
+
+	res
+}
+
+tuber_check <- 
+function(req) {
+
+  if (req$status_code < 400) return(invisible())
+
+  stop("HTTP failure: ", req$status_code, "\n", call. = FALSE)
+} 
+
+get_channel_stats <- function (channel_id = NULL, ...) {
+
+	if (!is.character(channel_id)) stop("Must specify a channel ID.")
+	
+	querylist <- list(part = "statistics,snippet", id = channel_id)
+    
+    raw_res  <- tuber_GET("channels", querylist, ...)
+
+    if (length(raw_res$items) ==0) { 
+    	cat("No channel stats available. Likely cause: Incorrect channel_id. \n")
+    	return(list())
+    }
+
+    res  <- raw_res$items[[1]] 
+    res1 <- res$statistics
+    res2 <- res$snippet
+    
+  #cat('Channel Title:', res2$title, "\n")
+	#cat('No. of Views:', res1$viewCount, "\n")
+	#cat('No. of Subscribers:', res1$subscriberCount, "\n")
+	#cat('No. of Videos:', res1$videoCount, "\n")
+ 	
+	res <- tibble(title = as.factor(res2$title),
+             nViews = as.numeric(res1$viewCount),
+             nComments = as.numeric(res1$commentCount),
+             nSubscribers = as.numeric(res1$subscriberCount),
+             nVideos = as.numeric(res1$videoCount))
+	
+	
+}
+
+channels_ids <- c("UC07Kxew-cMIaykMOkzqHtBQ", # LadyGaga_VEVO
+                  "UC9zX2xZIJ4cnwRsgBpHGvMg", # Beyonce_VEVO
+                  "UC2xskkQVFEpLcGFnNSLQY0A", # Rihanna_VEVO
+                  "UC-8Q-hLdECwQmaWNwXitYDw", # KatyPerry_VEVO
+                  "UCZijND2e2tPp2AQL8Go2YSg", # BritneySpears_VEVO
+                  "UCmQmc-Y4N9btVMUS1BfnyDw", # Madonna_VEVO
+                  "UComP_epzeKzvBX156r6pm1Q", # Adele_VEVO
+                  "UCANLZYMidaCbLQFWXBC95Jg", # TaylorSwift_VEVO
+                  "UC0VOyT2OCBKdQhF3BAbZ-1g", # ArianaGrande_VEVO
+                  "UCcdOEjqjiVAnUtEFZIRTlHg", # IggyAzalea_VEVO
+                  "UCdI8evszfZvyAl2UVCypkTA", # MileyCyrus_VEVO
+                  "UCVrPiUtl29kULN2HIAm244Q", # Lord_VEVO
+                  "UCaum3Yzdl3TbBt8YUeUGZLQ", # NickiMinaj_VEVO
+                  "UCf3cbfAXgPFL6OywH7JwOzA", # MeghanTrainor_VEVO
+                  "UCjK8ORC71kwyj1DWFwril_A", # SelenaGomez_VEVO
+                  "UCvu362oukLMN1miydXcLxGg", # EllieGoulding_VEVO
+                  "UC0sVahwZgKFHjOBaxvm-a7Q", # ToveLo_VEVO
+                  "UCmKdSrwf1e8coqAzUsrVHZw", # Sia_VEVO
+                  "UCKTgj8r-wp80wJgDxhc6jpA", # CarrieUnderwood_VEVO
+                  "UC1EwyHfJHEKnA7kKfcGhlIw", # AlessiaCara_VEVO
+                  "UCXJDX1KK6t121Z9FLhu5o2A", # Pink_VEVO
+                  "UCx1f1u4XlFFr0YgqF3wB4lQ", # JenniferLopez_VEVO
+                  "UCh6C5LG14uZKmwCgGxf-nDQ", # CelineDion_VEVO
+                  "UClS0wn3LPs9jdX_yt2g1k8w"  # MariahCarrey_VEVO
+                  )
 
 
-```{r}
-#numero de likes vs dislikes
-dados_gaga %>% 
-  mutate(likes = map(videos_stats, .f = 'likeCount'),
-         dislikes = map(videos_stats, .f = 'dislikeCount'),
-         comments = map(videos_stats, .f = 'commentCount')) %>% 
-  unnest(likes, dislikes, comments) %>% 
-  mutate(likes = as.numeric(likes),
-         dislikes = as.numeric(dislikes),
-         comments = as.numeric(comments),
-         publishedAt = as_date(publishedAt),
-         prop = likes/dislikes) %>% 
-  ggplot(aes(x = publishedAt)) +
-  geom_line(aes(y = comments, colour = "Likes/Dislikes")) +
-  labs(x = "Data de publição", y = "Likes/Dislikes") +
-  theme_bw()
-```
-
-```{r}
-#numero de likes vs dislikes
-dados_gaga %>% 
-  mutate(comments = map(videos_stats, .f = 'commentCount')) %>% 
-  unnest(comments) %>% 
-  mutate(comments = as.numeric(comments),
-         publishedAt = as_date(publishedAt)) %>% 
-  ggplot(aes(x = publishedAt)) +
-  geom_line(aes(y = comments, colour = "Comments")) +
-  labs(x = "Data de publição", y = "Comments") +
-  theme_bw()
-```
-
-```{r}
-#utilizando Plotly
+channels_info_geral <- rbind(
+                      channel_info_f("UC07Kxew-cMIaykMOkzqHtBQ"), # LadyGaga_VEVO
+                      channel_info_f("UC9zX2xZIJ4cnwRsgBpHGvMg"), # Beyonce_VEVO
+                      channel_info_f("UC2xskkQVFEpLcGFnNSLQY0A"), # Rihanna_VEVO
+                      channel_info_f("UC-8Q-hLdECwQmaWNwXitYDw"), # KatyPerry_VEVO
+                      channel_info_f("UCZijND2e2tPp2AQL8Go2YSg"), # BritneySpears_VEVO
+                      channel_info_f("UCmQmc-Y4N9btVMUS1BfnyDw"), # Madonna_VEVO
+                      channel_info_f("UComP_epzeKzvBX156r6pm1Q"), # Adele_VEVO
+                      channel_info_f("UCANLZYMidaCbLQFWXBC95Jg"), # TaylorSwift_VEVO
+                      channel_info_f("UC0VOyT2OCBKdQhF3BAbZ-1g"), # ArianaGrande_VEVO
+                      channel_info_f("UCcdOEjqjiVAnUtEFZIRTlHg"), # IggyAzalea_VEVO
+                      channel_info_f("UCdI8evszfZvyAl2UVCypkTA"), # MileyCyrus_VEVO
+                      channel_info_f("UCVrPiUtl29kULN2HIAm244Q"), # Lord_VEVO
+                      channel_info_f("UCaum3Yzdl3TbBt8YUeUGZLQ"), # NickiMinaj_VEVO
+                      channel_info_f("UCf3cbfAXgPFL6OywH7JwOzA"), # MeghanTrainor_VEVO
+                      channel_info_f("UCjK8ORC71kwyj1DWFwril_A"), # SelenaGomez_VEVO
+                      channel_info_f("UCvu362oukLMN1miydXcLxGg"), # EllieGoulding_VEVO
+                      channel_info_f("UC0sVahwZgKFHjOBaxvm-a7Q"), # ToveLo_VEVO
+                      channel_info_f("UCmKdSrwf1e8coqAzUsrVHZw"), # Sia_VEVO
+                      channel_info_f("UCKTgj8r-wp80wJgDxhc6jpA"), # CarrieUnderwood_VEVO
+                      channel_info_f("UC1EwyHfJHEKnA7kKfcGhlIw"), # AlessiaCara_VEVO
+                      channel_info_f("UCXJDX1KK6t121Z9FLhu5o2A"), # Pink_VEVO
+                      channel_info_f("UCx1f1u4XlFFr0YgqF3wB4lQ"), # JenniferLopez_VEVO
+                      channel_info_f("UCh6C5LG14uZKmwCgGxf-nDQ"), # CelineDion_VEVO
+                      channel_info_f("UClS0wn3LPs9jdX_yt2g1k8w")  # MariahCarrey_VEVO
+                      
+                      )
 library(plotly)
-packageVersion('plotly')
 
-gaga <- dados_gaga %>% 
-  mutate(views = map(videos_stats, .f = 'viewCount')) %>% 
-  unnest(views )%>% 
-  mutate(views = as.numeric(views),
-         publishedAt = as_date(publishedAt),
-         Nome = 'Lady Gaga')
+plot_ly(channels_info_geral, x= (~title), y= ~nViews)
 
-beyonce <- dados_beyonce %>% 
-  mutate(views = map(videos_stats, .f = 'viewCount')) %>% 
-  unnest(views )%>% 
-  mutate(views = as.numeric(views),
-         publishedAt = as_date(publishedAt),
-         Nome = 'Beyonce')
+```
 
 
-rihanna <- dados_rihanna %>% 
-  mutate(views = map(videos_stats, .f = 'viewCount')) %>% 
-  unnest(views )%>% 
-  mutate(views = as.numeric(views),
-         publishedAt = as_date(publishedAt),
-         Nome = 'Rihanna')
 
-kattyPerry <- dados_katty %>% 
-  mutate(views = map(videos_stats, .f = 'viewCount')) %>% 
-  unnest(views )%>% 
-  mutate(views = as.numeric(views),
-         publishedAt = as_date(publishedAt),
-         Nome = 'Katty Perry')
+```{r}
+videos_stats <- function(data, name){
+   data %>% 
+   mutate(views = map(videos_stats, .f = 'viewCount')) %>% 
+   unnest(views )%>% 
+   mutate(views = as.numeric(views),
+           publishedAt = as_date(publishedAt),
+           Nome = name)
+  
+}
 
-brineySpears <- dados_britney %>% 
-  mutate(views = map(videos_stats, .f = 'viewCount')) %>% 
-  unnest(views )%>% 
-  mutate(views = as.numeric(views),
-         publishedAt = as_date(publishedAt),
-         Nome = 'Briney Spears')
+#pegando estatisticas dos videos de cada cantora 
+videos_stats_LadyGaga <- videos_stats(dados_gaga, "Lady Gaga")
+videos_stats_Beyonce <- videos_stats(dados_beyonce, "Beyonce")
+videos_stats_Rihanna <- videos_stats(dados_rihanna, "Rihanna")
+videos_stats_KatyPerry <- videos_stats(dados_katty, "Katty Perry")
+videos_stats_BritneySpears <- videos_stats(dados_britney, "Briney Spears")
+videos_stats_Madonna <- videos_stats(dados_madonna, "Madonna")
+videos_stats_Adele <- videos_stats(dados_adele, "Adele")
+videos_stats_Taylor <- videos_stats(dados_taylor, "Taylor Swift")
+videos_stats_Ariana <- videos_stats(dados_ariana, "Ariana Grande")
+videos_stats_Iggy <- videos_stats(dados_iggy, "Iggy Azalea")
+videos_stats_Miley <- videos_stats(dados_miley, "Miley Cyrus")
+videos_stats_Lord <- videos_stats(dados_lord, "Lord")
+videos_stats_Nicki <- videos_stats(dados_nicki, "Nicki Minaj")
+videos_stats_Meghan <- videos_stats(dados_meghan, "Meghan Trainor")
+videos_stats_Selana <- videos_stats(dados_selena, "Selena Gomez")
+videos_stats_Ellie <- videos_stats(dados_ellie, "Ellie Goulding")
+videos_stats_ToveLo <- videos_stats(dados_tovelo, "Tove Lo")
+videos_stats_Sia <- videos_stats(dados_sia, "Sia")
+videos_stats_Carrie <- videos_stats(dados_carrie, "Carrie Underwood")
+videos_stats_Alessia <- videos_stats(dados_alesia, "Alessia Cara")
+videos_stats_Pink <- videos_stats(dados_pink, "Pink")
+videos_stats_JLo <- videos_stats(dados_jlo, "Jennifer Lopez")
+videos_stats_Celine <- videos_stats(dados_celine, "Celine Dion")
+videos_stats_Mariah <- videos_stats(dados_mariah, "Mariah Carey")
 
-madonna <- dados_madonna %>% 
-  mutate(views = map(videos_stats, .f = 'viewCount')) %>% 
-  unnest(views )%>% 
-  mutate(views = as.numeric(views),
-         publishedAt = as_date(publishedAt),
-         Nome = 'Madonna')
+#montando dataset com as estatísticas de todos os vídeos
+videos_stats_DivasPop <- rbind(
+          videos_stats_LadyGaga, 
+          videos_stats_Beyonce, 
+          videos_stats_Rihanna,
+          videos_stats_KatyPerry,
+          videos_stats_BritneySpears,
+          videos_stats_Madonna,
+          videos_stats_Adele,
+          videos_stats_Taylor,
+          videos_stats_Ariana,
+          videos_stats_Iggy, 
+          videos_stats_Miley,
+          videos_stats_Lord,
+          videos_stats_Nicki,
+          videos_stats_Meghan,
+          videos_stats_Selana,
+          videos_stats_Ellie,
+          videos_stats_ToveLo, 
+          videos_stats_Sia, 
+          videos_stats_Carrie,
+          videos_stats_Alessia,
+          videos_stats_Pink,
+          videos_stats_JLo,
+          videos_stats_Celine, 
+          videos_stats_Mariah
+        )
 
-adele <- dados_adele %>% 
-  mutate(views = map(videos_stats, .f = 'viewCount')) %>% 
-  unnest(views )%>% 
-  mutate(views = as.numeric(views),
-         publishedAt = as_date(publishedAt),
-         Nome = 'Adele')
+divas_pop <- videos_stats_DivasPop %>%
+  select(Nome, title, publishedAt, video_id, views)
+write.csv(divas_pop, "divas_pop.csv", row.names = F)
+write.csv(resume_divas_pop, "resume_divas_pop.csv", row.names = F)
 
-taylor <- dados_taylor %>% 
-  mutate(views = map(videos_stats, .f = 'viewCount')) %>% 
-  unnest(views )%>% 
-  mutate(views = as.numeric(views),
-         publishedAt = as_date(publishedAt),
-         Nome = 'Taylor Swift')
-
-demi <- dados_demi %>% 
-  mutate(views = map(videos_stats, .f = 'viewCount')) %>% 
-  unnest(views )%>% 
-  mutate(views = as.numeric(views),
-         publishedAt = as_date(publishedAt),
-         Nome = 'Demi Lovato')
-
-ariana <- dados_ariana %>% 
-  mutate(views = map(videos_stats, .f = 'viewCount')) %>% 
-  unnest(views )%>% 
-  mutate(views = as.numeric(views),
-         publishedAt = as_date(publishedAt),
-         Nome = 'Ariana Grande')
-
-divas_pop <- rbind(gaga, rihanna, beyonce, kattyPerry, brineySpears, madonna, adele, taylor, demi, ariana)
-
-#divas_pop <- divas_pop %>%
-#  select(Nome, title, publishedAt, video_id, views)
-#write.csv(divas_pop, "divas_pop.csv", row.names = F)
-
-
-resume_divas_pop <-  divas_pop %>%
+resume_divas_pop <- videos_stats_DivasPop %>%options(scipen=999)
+  select(Nome, publishedAt, views) %>%
   unnest(views) %>% 
   mutate(views = as.numeric(views),
          ano =  as.numeric( format( as.Date( publishedAt, origin='1900-1-1'), '%Y')),
-         publishedAt = as_date(publishedAt)) %>% 
+         publishedAt = as_date(publishedAt),
+         Nome = as.factor(Nome)) %>% 
   group_by(Nome, ano) %>%
   summarise(total_views = sum(views)) %>%
   mutate(ano = as.character(ano))
-  
-  
-  
-  
-ggplot(resume_divas_pop, aes(x = ano, y = total_views, group = Nome, colour = Nome)) +
-  geom_line() +
-  geom_point() +
-  geom_path(alpha = 0.5) +
-  labs(x = "Ano", y = "Número de Views") +
-  theme_bw()
 
+```
+Numero de views divido por numero de inscritos
 
-divas_line_chart <- plot_ly(resume_divas_pop, x = ano, y = total_views, name = 'views', type = 'line', group = Nome,  mode = 'line',  text = paste("Diva: ", Nome))  %>%
+```{r}
+#visualizações
+library(plotly)
+packageVersion('plotly')
+
+divas_line_chart  <- plot_ly(resume_divas_pop , x = ~ano, y = ~total_views, name = 'Nome', type = 'scatter', color = resume_divas_pop$Nome, mode = 'lines+markers', text = paste(resume_divas_pop$Nome))  %>%
   layout(title = "Resumo Divas Pop - Nº views no YouTube por Ano", 
          xaxis = list(title="Ano"),
          yaxis = list(title="Nº de Views"))
 
 divas_line_chart
 
+plot_ly(resume_divas_pop,x = resume_divas_pop$ano, y = resume_divas_pop$total_views, type = 'line')
 
-divas_bouble_chart <- plot_ly(resume_divas_pop, x = ano, y = total_views, size = total_views, group = Nome,  mode = 'markers', text = paste("Diva: ", Nome))  %>%
+divas_bouble_chart <-plot_ly(resume_divas_pop, x = ~ano, y = ~total_views, size= ~total_views, type = 'scatter', color = resume_divas_pop$Nome, mode = 'markers', text = paste(resume_divas_pop$Nome))  %>%
   layout(title = "Resumo Divas Pop - Nº views no YouTube por Ano", 
          xaxis = list(title="Ano"),
          yaxis = list(title="Nº de Views"))
 
 divas_bouble_chart
 ```
+
+
 
