@@ -581,7 +581,7 @@ plot_ly(info_2015, y = ~X, x = ~as.factor(ano_lista), type = 'scatter', color = 
 
 ```
 
-Analisando os três cenários descritos acima, cheguei a conclusão que estar dentre as artitas que mais faturaram durante o ano (no caso da Forbes), não implica dizer que ela será a mais popular no YouTube, já os resultados referentes a Billboard vemos que se assemelham bastante com os do YouTube. Sobre a confiança nesses rankings, o da Forbes não tem muita discussão, já que é montado com base nos lucros das cantoras, já o da Billboard é bastante semelhante com o do YouTube, o que nos passa uma confiança maior.
+Analisando os três cenários descritos acima, cheguei a conclusão que estar dentre as artistas que mais faturaram durante o ano (no caso da Forbes), não implica dizer que ela será a mais popular no YouTube, já os resultados referentes a Billboard vemos que se assemelham bastante com os do YouTube. Sobre a confiança nesses rankings, o da Forbes não tem muita discussão, já que é montado com base nos lucros das cantoras, já o da Billboard é bastante semelhante com o do YouTube, o que nos passa uma confiança maior.
 
 <h4>**Hipótese II:** *qual a maior diva pop do YouTube?*</h4>
 Utilizei uma estatística simples, a média de views por número de vídeos. Iremos ver quem, dentre as maiores divas da música pop, é que possui mais views por vídeo. 
