@@ -584,56 +584,77 @@ plot_ly(info_2015, y = ~X, x = ~as.factor(ano_lista), type = 'scatter', color = 
 
 Analisando os três cenários descritos acima, cheguei a conclusão que ser a artitas que mais fatura durante o ano (no caso da Forbes), não implica dizer que ela será a mais popular no YouTube , já os resultados referentes a Billboard vemos que se assemelham bastante com os do YouTube. Então, o ranking da Billboard se parece mais com os do YouTube, diferente da Forbes.
 
-<h4>**Hipótese II:** *qual a maior diva em número de visualizações?*</h4>
-	
-<h4>**Hipótese III:** *sabemos que o lançamento dos álbuns reflete um aumento nos seus views e a partir desse evento, podemos dizer qual cantora teve o álbum mais badalado do ano.*</h4>
+<h4>**Hipótese II:** *qual a maior diva pop do YouTube?*</h4>
+Utilizei uma métrica estatística simples, a média de views por número de vídeos. Iremos ver quem, dentre as maiores divas da música pop, é que possui mais views por vídeo. 
 
-```{r, eval=F}
-plot_nViewsYouTube <- plot_ly(channels_info_geral, 
+```{r, message=F, warning=F,fig.width=10, fig.height=5}
+info_geral_channels <- info_geral_channels %>%
+  mutate(ViewsPorVideo = nViews/nVideos)
+
+#ordenando dataset
+info_geral_channels$title <- factor(info_geral_channels$title, levels = unique(info_geral_channels$title)[order(info_geral_channels$ViewsPorVideo, decreasing = TRUE)])
+
+
+plot_ly(info_geral_channels, 
+        x = ~title, 
+        y = ~ViewsPorVideo, 
+        type = "bar", 
+        color = ~title,
+        text = ~paste('Diva: ', info_geral_channels$title)) %>%
+  layout(title = "Media de Views por Video no YouTube - 2008 até 2017",
+         showlegend = FALSE,
+         xaxis = list(title="Divas", tickangle = 50),
+         yaxis = list(title="nº views"))
+```
+
+Segundo os dados, as colocações no nosso ranking mudaram, dentre os 21 canais das 21 maiores divas de todos os tempos (2008-2017), Adele possui uma média de, quase 183 milhões de views por vídeo, seguida pela Taylor Swift com quase 145 milhões de views em cada um dos seus 77 videos. Essa métrica não é muito confiável, visto que a quantidade de vídeos é bastante diferente entre os canais. Por isso, olhei mais umas informações para tentar encontrar a maior ou as maiores divas do YouTube. 
+
+```{r, message=F, warning=F,fig.width=10, fig.height=5}
+#ordenando
+info_geral_channels$title <- factor(info_geral_channels$title, levels = unique(info_geral_channels$title)[order(info_geral_channels$nViews, decreasing = TRUE)])
+
+#plot nViews
+plot_ly(info_geral_channels, 
         x = ~title, 
         y = ~nViews, 
-        type = "bar", 
-        color = ~title) %>%
-  layout(title = "Numero de Views no YouTube - 2008 até 2017",
+        type = "scatter", 
+        color = ~title,
+        size = ~nViews,
+        text = ~paste('Diva: ', info_geral_channels$title)) %>%
+  layout(title = "Número de Views do canal - 2008 até 2017",
          showlegend = FALSE,
-         xaxis = list(title="Divas", tickangle = 45),
+         xaxis = list(title="", tickangle = 50),
          yaxis = list(title="nº views"))
 ```
 
 
-```{r, eval=F}
-resume_divas_pop <- videos_stats_DivasPop %>%
-  select(Nome, publishedAt, views) %>%
-  unnest(views) %>% 
-  mutate(views = as.numeric(views),
-         ano =  as.numeric( format( as.Date( publishedAt, origin='1900-1-1'), '%Y')),
-         publishedAt = as_date(publishedAt),
-         Nome = as.factor(Nome),
-         likes = map(videos_stats, .f = 'likeCount'),
-         dislikes = map(videos_stats, .f = 'dislikeCount')) %>% 
-  group_by(Nome, ano) %>%
-  summarise(total_views = sum(views)) %>%
-  mutate(ano = as.character(ano))
+Temos agora algumas mudanças, mas o cenário continua parecido. Dessa vez, a maior diva do YouTube, segundo a quantidade de views, é Katy Perry com quase 11,5 bilhão de views em seu canal, seguida pela Taylor Swift com 11B de views e depois a Rihanna com 11B de views e logo depois a Beyoncé com quase 7 B de views em seu canal. 
 
-```
-Numero de views divido por numero de inscritos
 
-```{r, eval=F}
+<h4>**Panorama Geral** *histórico das divas no YouTube*</h4>
+
+No gŕafico abaixo, é possível visualizar todo o histórico de das 20 maiores cantoras pops da história do YouTube.
+```{r, message=F, warning=F,fig.width=10, fig.height=5}
 #visualizações
-divas_line_chart  <- plot_ly(resume_divas_pop , x = ~ano, y = ~total_views, name = 'Nome', type = 'scatter', color = resume_divas_pop$Nome, mode = 'lines+markers', text = paste(resume_divas_pop$Nome))  %>%
+plot_ly(info_geral_videos , x = ~ano, y = ~total_views, name = 'Nome', type = 'scatter', color = info_geral_videos$Nome, mode = 'lines+markers', text = paste(info_geral_videos$Nome))  %>%
   layout(title = "Resumo Divas Pop - Nº views no YouTube por Ano", 
          xaxis = list(title="Ano"),
          yaxis = list(title="Nº de Views"))
 
-divas_line_chart
-
-divas_bouble_chart <-plot_ly(resume_divas_pop, x = ~ano, y = ~total_views, size= ~total_views, type = 'scatter', color = resume_divas_pop$Nome, mode = 'markers', text = paste(resume_divas_pop$Nome))  %>%
-  layout(title = "Resumo Divas Pop - Nº views no YouTube por Ano", 
-         xaxis = list(title="Ano"),
-         yaxis = list(title="Nº de Views"))
-
-divas_bouble_chart
 ```
 
+É possível marcar ou desmarcar o nome da artista, o que ajuda a fazer comparações.
+Temos agora outra visualização sobre o histórico dos canais das Divas no YouTube.
 
+```{r, message=F, warning=F,fig.width=10, fig.height=5}
+plot_ly(info_geral_videos, x = ~ano, y = ~total_views, size= ~total_views, type = 'scatter', color = info_geral_videos$Nome, mode = 'markers', text = paste(info_geral_videos$Nome))  %>%
+  layout(title = "Resumo Divas Pop - Nº views no YouTube por Ano", 
+         xaxis = list(title="Ano"),
+         yaxis = list(title="Nº de Views"))
+```
+
+<h2>**Conclusões**</h2>
+O tema não é algo de extrema importância para humanidade, mas para quem gosta de música pop e tem sua diva preferida tem disponível novos argumentos para as intermináveis discussões nas redes sociais da vida. O interessante desse trabalho é aprender a mexer nessa ferramenta incrível que é o RStudio, utilizando bibliotecas fantásticas e aprendendo a integrar com a API de uma plataforma mundialmente conhecida e acessada por todos nós. O código está disponível e você pode brincar com os dados dos seus canais favoritos, fazendo análises, comparações e descobrindo fatos curiosos.
+
+E se sua diva não apareceu aqui, não fique triste, futuramente ela aparecerá nos rankings mundiais :) 
 
