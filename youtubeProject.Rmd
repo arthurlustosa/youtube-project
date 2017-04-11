@@ -1,5 +1,5 @@
 ---
-title: "YouTubeProject"
+title: "Divas Pop segundo o YouTube"
 author: "Arthur Lustosa de Souza"
 date: "2 de abril de 2017"
 output: html_document
@@ -537,14 +537,14 @@ info_2014 <- get_top_10(listas, 2014)
 
 #plot 2014
 
-plot_ly(info_2014, y = ~X, x = ~ano_lista, type = 'scatter', color = info_2014$nome, mode = 'line+markers', 
+plot_ly(info_2014, y = ~ranking, x = ~ano_lista, type = 'scatter', color = info_2014$nome, mode = 'line+markers', 
         hoverinfo = 'text',
         text = ~paste('Diva: ', info_2014$nome, 
                       '</br> Ranking: ', info_2014$ranking,
                       '</br> nViews: ', info_2014$nViews)) %>%
-  layout(title = "2014: Billboard, Forbes e Youtube ", 
+  layout(title = "2014: Billboard, Youtube e Forbes ", 
          xaxis = list(title=""),
-         yaxis = list(title="Ranking"))
+         yaxis = list(title="Ranking", autotick=F,  tick0 = 0,  autorange = "reversed"))
 
 ```
 
@@ -554,14 +554,14 @@ info_2015 <- get_top_10(listas, 2015)
 
 #plot 2015
 
-plot_ly(info_2015, y = ~X, x = ~ano_lista, type = 'scatter', color = info_2015$nome, mode = 'line+markers', 
+plot_ly(info_2015, y = ~ranking, x = ~ano_lista, type = 'scatter', color = info_2015$nome, mode = 'line+markers', 
         hoverinfo = 'text',
         text = ~paste('Diva: ', info_2015$nome, 
                       '</br> Ranking: ', info_2015$ranking,
                       '</br> nViews: ', info_2015$nViews)) %>%
-  layout(title = "2015: Billboard, Forbes e Youtube ", 
-         xaxis = list(title="", type='category', categoryorder='array', categoryarray = sort(unique(info_2015$ano_lista))),
-         yaxis = list(title="Ranking"))
+  layout(title = "2015: Billboard, Youtube e Forbes ", 
+         xaxis = list(title=""),
+         yaxis = list(title="Ranking", autotick=F,  tick0 = 0,  autorange = "reversed"))
 
 ```
 
@@ -571,15 +571,14 @@ info_2016 <- get_top_10(listas, 2016)
 
 #plot 2016
 
-plot_ly(info_2015, y = ~X, x = ~as.factor(ano_lista), type = 'scatter', color = info_2016$nome, mode = 'line+markers', 
+plot_ly(info_2016, y = ~ranking, x = ~as.factor(ano_lista), type = 'scatter', color = info_2016$nome, mode = 'line+markers', 
         hoverinfo = 'text',
         text = ~paste('Diva: ', info_2016$nome, 
                       '</br> Ranking: ', info_2016$ranking,
                       '</br> nViews: ', info_2016$nViews)) %>%
-  layout(title = "2016: Billboard, Forbes e Youtube ", 
+  layout(title = "2016: Billboard, Youtube e Forbes ", 
          xaxis = list(title=""),
-         yaxis = list(title="Ranking"))
-
+         yaxis = list(title="Ranking", autotick=F,  tick0 = 0,  autorange = "reversed"))
 ```
 
 Analisando os três cenários descritos acima, cheguei a conclusão que estar dentre as artistas que mais faturaram durante o ano (no caso da Forbes), não implica dizer que ela será a mais popular no YouTube, já os resultados referentes a Billboard vemos que se assemelham bastante com os do YouTube. Sobre a confiança nesses rankings, o da Forbes não tem muita discussão, já que é montado com base nos lucros das cantoras, já o da Billboard é bastante semelhante com o do YouTube, o que nos passa uma confiança maior.
@@ -645,9 +644,8 @@ No gŕafico abaixo, é possível visualizar todo o histórico de das 21 maiores 
 #visualizações
 plot_ly(info_geral_videos , x = ~ano, y = ~total_views, name = 'Nome', type = 'scatter', color = info_geral_videos$Nome, mode = 'lines+markers', text = paste(info_geral_videos$Nome))  %>%
   layout(title = "Resumo Divas Pop - Nº views no YouTube por Ano", 
-         xaxis = list(title="Ano"),
+         xaxis = list(title="Ano", autotick=F),
          yaxis = list(title="Nº de Views"))
-
 ```
 
 É possível marcar ou desmarcar o nome da artista, o que ajuda a fazer comparações.
@@ -657,14 +655,14 @@ Temos agora outra visualização sobre o histórico dos canais das Divas no YouT
 ```{r, message=F, warning=F,fig.width=10, fig.height=5}
 plot_ly(info_geral_videos, x = ~ano, y = ~total_views, size= ~total_views, type = 'scatter', color = info_geral_videos$Nome, mode = 'markers', text = paste(info_geral_videos$Nome))  %>%
   layout(title = "Resumo Divas Pop - Nº views no YouTube por Ano", 
-         xaxis = list(title="Ano"),
+         xaxis = list(title="Ano", autotick=F),
          yaxis = list(title="Nº de Views"))
-
-
 ```
 
 <h2>**Conclusões**</h2>
-O tema não é algo de extrema importância para humanidade, mas para quem gosta de música pop e tem sua diva preferida, possui agora novos argumentos para as intermináveis discussões sobre quem é a melhor, nas redes sociais da vida. O interessante desse trabalho é aprender a mexer nessa ferramenta incrível que é o RStudio, utilizando bibliotecas fantásticas e aprendendo a integrar com a API de uma plataforma mundialmente conhecida e acessada por todos nós. O código está disponível e você pode brincar com os dados dos seus canais favoritos, fazendo análises, comparações e descobrindo fatos curiosos.
+O interessante desse trabalho é aprender a mexer nessa ferramenta incrível que é o RStudio, utilizando bibliotecas fantásticas e aprendendo a integrar com a API de uma plataforma mundialmente conhecida e acessada por todos nós. O tema não é nenhuma tese de doutorado (ou é), mas para quem gosta de música pop e tem sua diva preferida, agora possui novos argumentos para as intermináveis discussões sobre quem é a melhor de todas.
+
+O código está [disponível](github.com/arthurlustosa/youtube-project) e você pode aprender a utilizar as bibliotecas aqui usadas e brincar com os dados dos seus canais favoritos, fazendo análises, comparações e descobrindo fatos curiosos.
 
 E se sua diva não apareceu aqui, não fique triste, futuramente ela aparecerá nos rankings mundiais :) 
 
