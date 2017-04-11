@@ -5,7 +5,8 @@ date: "2 de abril de 2017"
 output: html_document
 ---
 
-Todo mundo é viciado em música pop, ou conhece alguém que é! Seja você fã ou apenas um curioso, já se perguntou quem é a maior diva pop de todos os tempos? Muitos diriam que a resposta é simples e pode ser encontrada nas listas divulgadas pelas rádios ou revistas de música, mas dai nos questionamos, e como esses rankings são montados? e de onde vem esses dados?
+Todo mundo é viciado em música pop, ou conhece alguém, ou tem uma prima/o ou tia/o que é!
+Seja você fã ou apenas um curioso, já se perguntou quem é a maior diva pop de todos os tempos? Muitos diriam que a resposta é simples e pode ser encontrada nas listas divulgadas pelas rádios ou revistas de música, mas dai nos questionamos, e como esses rankings são montados? e de onde vem esses dados?
 
 Analisando os últimos lançamento do mundo pop, fiquei curioso para tentar encontrar uma boa resposta para essa pergunta, e para isso decidi analisar os dados da maior plataforma de vídeos da internet, o YouTube. A ideia é coletar os dados dos canais dessas artistas e comparar os resultados com alguns desses rankings divulgados pelas rádios e revistas. Mas calma, e como saber quem são as artistas mais badaladas do mundo? Escolhi a listas da **Billboard:** *Top Artists Female* e da **Forbes:** *Highest-Paid Women in Music*, dos últimos três anos para embasar minha pesquisa. Analisei quem são as divas que aparece nas duas listas e montei um conjunto com as 21 divas pop que estiveram presentes nesses rankings.
 
@@ -559,7 +560,7 @@ plot_ly(info_2015, y = ~X, x = ~ano_lista, type = 'scatter', color = info_2015$n
                       '</br> Ranking: ', info_2015$ranking,
                       '</br> nViews: ', info_2015$nViews)) %>%
   layout(title = "2015: Billboard, Forbes e Youtube ", 
-         xaxis = list(title=""),
+         xaxis = list(title="", type='category', categoryorder='array', categoryarray = sort(unique(info_2015$ano_lista))),
          yaxis = list(title="Ranking"))
 
 ```
@@ -593,6 +594,7 @@ info_geral_channels <- info_geral_channels %>%
 #ordenando dataset
 info_geral_channels$title <- factor(info_geral_channels$title, levels = unique(info_geral_channels$title)[order(info_geral_channels$ViewsPorVideo, decreasing = TRUE)])
 
+m <- list(l=60, r=60, b=100, t=100, pad=4) #margens do gŕafico
 
 plot_ly(info_geral_channels, 
         x = ~title, 
@@ -602,8 +604,9 @@ plot_ly(info_geral_channels,
         text = ~paste('Diva: ', info_geral_channels$title)) %>%
   layout(title = "Media de Views por Video no YouTube - 2008 até 2017",
          showlegend = FALSE,
-         xaxis = list(title="Divas", tickangle = 50),
-         yaxis = list(title="nº views"))
+         xaxis = list(title="Divas", tickangle = 30),
+         yaxis = list(title="nº views"),
+         margin=m)
 
 ```
 
@@ -614,6 +617,7 @@ Segundo os dados, as colocações no nosso ranking mudaram, dentre os 21 canais 
 info_geral_channels$title <- factor(info_geral_channels$title, levels = unique(info_geral_channels$title)[order(info_geral_channels$nViews, decreasing = TRUE)])
 
 #plot nViews
+m <- list(l=60, r=60, b=100, t=100, pad=4) #margens do gŕafico
 plot_ly(info_geral_channels, 
         x = ~title, 
         y = ~nViews, 
@@ -623,8 +627,10 @@ plot_ly(info_geral_channels,
         text = ~paste('Diva: ', info_geral_channels$title)) %>%
   layout(title = "Número de Views do canal - 2008 até 2017",
          showlegend = FALSE,
-         xaxis = list(title="", tickangle = 50),
-         yaxis = list(title="nº views"))
+         xaxis = list(title="", tickangle = 30),
+         yaxis = list(title="nº views"),
+         autosize=F,
+         margin=m)
 
 ```
 
