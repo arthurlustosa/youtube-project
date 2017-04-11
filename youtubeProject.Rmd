@@ -17,36 +17,47 @@ Para capturar os dados do youtube utilizei como tutorial uma análise feita por 
 
 Para montarmos nosso dataset precisamos dos dados dos canais das artistas. Utilizarei o pacote tube r que permite acessar a API do YouTube utilizando o R. Assim, teremos acesso a diversas estatísticas como número de likes, quantidade de views, comentários e etc.
 
-```{r setup, include=FALSE}
-#instalando pacote do youtube 
-#install.packages("tuber")
-#versao mais atualizada do pacote do youtube
+<h2>**Passo 1: instalar e configurar o pacote tuber**</h2>
+
+Para install.packages(“tuber”) ou para obter a versão de desenvolvimento atual do GitHub devtools::install_github("soodoku/tuber", build_vignettes = TRUE).  Lembrando de instalar o pacote install.packages(“devtools”).
+
+```{r, eval=F, message=F, warning=F}
 install.packages('devtools')
 library(devtools)
 devtools::install_github("soodoku/tuber", build_vignettes = TRUE)
 
-#carregando bibliotecas necess?rias
-library(tuber)
+#carregando bibliotecas necessarias
+library(tuber)  # Acesso a API do YouTube
 ```
 
-```{r, echo=F}
+Precisamos agora fazer a autenticação com o YouTube, é necessário um id e um secret. Para saber como fazer isso, siga o passo a passo disponível em Configurando API YouTube https://developers.google.com/youtube/v3/getting-started
+Com seu id e secret em mão, agora vamos configurar o acesso do tuber à API.
+
+```{r, eval=F, echo=F}
 #autenticando com youtube 
 yt_oauth(app_id = "75896210182-3rmjt1ejj59q3hf51dakpd41pn1mdv8e.apps.googleusercontent.com",
         app_secret = "E9UO47eqk_21CkUfJcRJu3fB")
 ```
 
-```{r}
+```{r, eval=F, }
+#autenticando com youtube 
+yt_oauth(app_id = "id_secret",
+        app_secret = "toke_secret")
+```
+
+Se tudo ocorrer bem, após rodar o código acima, uma janela será aberta no seu navegador confirmando a autenticação, após isso você pode voltar para o R e iniciar os trabalhos.
+
+```{r, message=F, warning=F}
 #carregando biblitotecas extras
-library(dplyr) 
-library(tibble)
-library(lubridate)
-library(purrr)
-library(ggplot2)
+library(dplyr)        # Manipulação de dados
+library(tibble)       # Criação de dataframes
+library(lubridate)    # Manipulação de datas
+library(purrr)        # Funcionais
+library(plotly)       # Gráficos
 library(tidyr)
 ```
 
-
-```{r}
+```{r, eval=F, echo=F}
 # LadyGaga_VEVO: "UC07Kxew-cMIaykMOkzqHtBQ" 
 # Beyonce_VEVO: "UC9zX2xZIJ4cnwRsgBpHGvMg" 
 # Rihanna_VEVO: "UC2xskkQVFEpLcGFnNSLQY0A" 
@@ -71,8 +82,17 @@ library(tidyr)
 # JenniferLopez_VEVO:"UCx1f1u4XlFFr0YgqF3wB4lQ"
 # CelineDion_VEVO: "UCh6C5LG14uZKmwCgGxf-nDQ"
 # MariahCarrey: "UClS0wn3LPs9jdX_yt2g1k8w"
+```
 
+<h2>**Passo 2: buscar os ids dos canais das cantoras**</h2>
 
+Precisamos do id do canal de cada cantora, conseguimos essa informação na url do youtube https://www.youtube.com/channel/<channel_id>. 
+
+A Função tuber:: yt_search() pesquisa por videos e sua informações. Mais detalhes sobre a biblioteca tuber https://github.com/soodoku/tuber.
+Por default, a função yt_search() possui um número máximo de requisições, 50 no total. Mas não desanime, podemos configurá-la setando seus parâmetros type = “video” e channel_id = “id_de_algum_canal”, o número de requisições passa para 500 resultados.
+Para facilitar e automatizar nosso trabalho, adaptei a função get_videos() disponível em <>. Ela recebe uma data de início e de término (em um dataframe com apenas uma linha) e o id_do_canal (em formtato de string) e devolve todos os vídeos do canal nesse período. 
+
+```{r, eval=F}
 get_videos <- function(dates, id_channel) {
   
   yt_search(term = "", 
@@ -83,12 +103,25 @@ get_videos <- function(dates, id_channel) {
   
 }
 
+```
+
+Cada linha do dataframe de datas a seguir representa períodos de um ano, de 2009 a 2017. (2009 porque foi o ano em que a primeira cantora ingressou no YouTube). O mutate formata as datas no padrão exigido pela função yt_search(). Veja help(yt_search) para mais informações.
+
+```{r, eval=F}
 dates <- tibble(start = seq(ymd("2008-01-01"), ymd("2017-01-01"), by = "years"),
                         end = seq(ymd("2008-12-31"), ymd("2017-12-31"), by = "years")) %>% 
   mutate(start = paste(start, "T0:00:00Z", sep = ""),
          end = paste(end, "T0:00:00Z", sep = ""))
 
+```
+
+Por fim, atribuímos ao objeto videos as informações de todos os vídeos da cantora em seu respectivo canal de 2009 até 2017. (Caso não possua vídeos nesse perído uma lista vazia será retornada). Por exemplo, vamos pegar as informações dos vídeos das cantoras, Lady Gaga. O mesmo passo será realizado para as demais artistas.
+
+```{r, eval=F}
 videos_gaga <- by_row(.d = dates, "UC07Kxew-cMIaykMOkzqHtBQ", ..f = get_videos, .to = "videos_info")
+```
+
+```{r, eval=F, echo=F}
 videos_beyonce <- by_row(.d = dates, "UC9zX2xZIJ4cnwRsgBpHGvMg", ..f = get_videos, .to = "videos_info")
 videos_rihanna <- by_row(.d = dates, "UC2xskkQVFEpLcGFnNSLQY0A", ..f = get_videos, .to = "videos_info")
 videos_katyPerry <- by_row(.d = dates, "UC-8Q-hLdECwQmaWNwXitYDw", ..f = get_videos, .to = "videos_info")
@@ -112,16 +145,33 @@ videos_pink <- by_row(.d = dates, "UCXJDX1KK6t121Z9FLhu5o2A", ..f = get_videos, 
 videos_jlo <- by_row(.d = dates, "UCx1f1u4XlFFr0YgqF3wB4lQ", ..f = get_videos, .to = "videos_info")
 videos_celine <- by_row(.d = dates, "UCh6C5LG14uZKmwCgGxf-nDQ", ..f = get_videos, .to = "videos_info")
 videos_mariah <- by_row(.d = dates, "UClS0wn3LPs9jdX_yt2g1k8w", ..f = get_videos, .to = "videos_info")
-
 ```
 
 
-```{r}
-#pegando estatísticas dos v?deos
+<h2>**Passo 3: pegar as estatísticas de cada vídeo do canal**</h2>
+
+Precisamos das estatísticas dos vídeos, para isso utilizei a função get_videos_stats() disponível em <> que recebe um dataframe de uma linha contendo uma coluna $video_id e, usando a função tuber::get_stats(), faz o scrape das estatísticas do vídeo. 
+
+```{r, eval=F}
+#pegando estatísticas dos vídeos
 get_videos_stats <- function(df_row) {
   get_stats(video_id = df_row$video_id)
 }
 
+```
+
+Hora de montar os datasets. Cada elemento da coluna video_info contém um dataframe com as informações dos vídeos de um determinado ano. Utilizando a função dplyr::bind_rows(), juntamos esses dataframes em um só. Selecionamentos apenas as colunas de nosso interesse: title, publishedAt e video_id. Por fim, utilizamos os id’s para baixar as estatítisca de cada vídeo usando a função get_videos_stats(). As estatísticas são salvas na coluna $vídeos_stats do objeto dados. 
+
+```{r, eval=F}
+dados_gaga <- bind_rows(videos_gaga$videos_info) %>% 
+  select(title, publishedAt, video_id) %>%
+  by_row(..f = get_videos_stats, .to = "videos_stats")
+
+```
+
+
+```{r, eval=F, echo=F}
+#pegando informações de todos os vídeos dos canais das cantoras
 dados_gaga <- bind_rows(videos_gaga$videos_info) %>% 
   select(title, publishedAt, video_id) %>%
   by_row(..f = get_videos_stats, .to = "videos_stats")
@@ -226,135 +276,6 @@ dados_mariah <- bind_rows(videos_mariah$videos_info) %>%
   select(title, publishedAt, video_id) %>%
   by_row(..f = get_videos_stats, .to = "videos_stats")
 
-```
-
-
-```{r}
-#channel info
-library(httr) # funções de requisições http
-
-yt_check_token <- function() {
-
-	app_token = getOption('google_token')
-    if (is.null(app_token)) stop("Please get a token using yt_oauth().\n")
-
-}
-
-tuber_GET <- 
-function(path, query, ...) {
-
-	yt_check_token()
-
-	req <- GET("https://www.googleapis.com", path=paste0("youtube/v3/", path), query=query, config(token = getOption("google_token")), ...)
-	
-	tuber_check(req)
-	res <- content(req)
-
-	res
-}
-
-tuber_check <- 
-function(req) {
-
-  if (req$status_code < 400) return(invisible())
-
-  stop("HTTP failure: ", req$status_code, "\n", call. = FALSE)
-} 
-
-get_channel_stats <- function (channel_id = NULL, ...) {
-
-	if (!is.character(channel_id)) stop("Must specify a channel ID.")
-	
-	querylist <- list(part = "statistics,snippet", id = channel_id)
-    
-    raw_res  <- tuber_GET("channels", querylist, ...)
-
-    if (length(raw_res$items) ==0) { 
-    	cat("No channel stats available. Likely cause: Incorrect channel_id. \n")
-    	return(list())
-    }
-
-    res  <- raw_res$items[[1]] 
-    res1 <- res$statistics
-    res2 <- res$snippet
-    
-  #cat('Channel Title:', res2$title, "\n")
-	#cat('No. of Views:', res1$viewCount, "\n")
-	#cat('No. of Subscribers:', res1$subscriberCount, "\n")
-	#cat('No. of Videos:', res1$videoCount, "\n")
- 	
-	res <- tibble(title = as.factor(res2$title),
-             nViews = as.numeric(res1$viewCount),
-             nComments = as.numeric(res1$commentCount),
-             nSubscribers = as.numeric(res1$subscriberCount),
-             nVideos = as.numeric(res1$videoCount))
-	
-	
-}
-
-channels_ids <- c("UC07Kxew-cMIaykMOkzqHtBQ", # LadyGaga_VEVO
-                  "UC9zX2xZIJ4cnwRsgBpHGvMg", # Beyonce_VEVO
-                  "UC2xskkQVFEpLcGFnNSLQY0A", # Rihanna_VEVO
-                  "UC-8Q-hLdECwQmaWNwXitYDw", # KatyPerry_VEVO
-                  "UCZijND2e2tPp2AQL8Go2YSg", # BritneySpears_VEVO
-                  "UCmQmc-Y4N9btVMUS1BfnyDw", # Madonna_VEVO
-                  "UComP_epzeKzvBX156r6pm1Q", # Adele_VEVO
-                  "UCANLZYMidaCbLQFWXBC95Jg", # TaylorSwift_VEVO
-                  "UC0VOyT2OCBKdQhF3BAbZ-1g", # ArianaGrande_VEVO
-                  "UCcdOEjqjiVAnUtEFZIRTlHg", # IggyAzalea_VEVO
-                  "UCdI8evszfZvyAl2UVCypkTA", # MileyCyrus_VEVO
-                  "UCVrPiUtl29kULN2HIAm244Q", # Lord_VEVO
-                  "UCaum3Yzdl3TbBt8YUeUGZLQ", # NickiMinaj_VEVO
-                  "UCf3cbfAXgPFL6OywH7JwOzA", # MeghanTrainor_VEVO
-                  "UCjK8ORC71kwyj1DWFwril_A", # SelenaGomez_VEVO
-                  "UCvu362oukLMN1miydXcLxGg", # EllieGoulding_VEVO
-                  "UC0sVahwZgKFHjOBaxvm-a7Q", # ToveLo_VEVO
-                  "UCmKdSrwf1e8coqAzUsrVHZw", # Sia_VEVO
-                  "UCKTgj8r-wp80wJgDxhc6jpA", # CarrieUnderwood_VEVO
-                  "UC1EwyHfJHEKnA7kKfcGhlIw", # AlessiaCara_VEVO
-                  "UCXJDX1KK6t121Z9FLhu5o2A", # Pink_VEVO
-                  "UCx1f1u4XlFFr0YgqF3wB4lQ", # JenniferLopez_VEVO
-                  "UCh6C5LG14uZKmwCgGxf-nDQ", # CelineDion_VEVO
-                  "UClS0wn3LPs9jdX_yt2g1k8w"  # MariahCarrey_VEVO
-                  )
-
-
-channels_info_geral <- rbind(
-                      channel_info_f("UC07Kxew-cMIaykMOkzqHtBQ"), # LadyGaga_VEVO
-                      channel_info_f("UC9zX2xZIJ4cnwRsgBpHGvMg"), # Beyonce_VEVO
-                      channel_info_f("UC2xskkQVFEpLcGFnNSLQY0A"), # Rihanna_VEVO
-                      channel_info_f("UC-8Q-hLdECwQmaWNwXitYDw"), # KatyPerry_VEVO
-                      channel_info_f("UCZijND2e2tPp2AQL8Go2YSg"), # BritneySpears_VEVO
-                      channel_info_f("UCmQmc-Y4N9btVMUS1BfnyDw"), # Madonna_VEVO
-                      channel_info_f("UComP_epzeKzvBX156r6pm1Q"), # Adele_VEVO
-                      channel_info_f("UCANLZYMidaCbLQFWXBC95Jg"), # TaylorSwift_VEVO
-                      channel_info_f("UC0VOyT2OCBKdQhF3BAbZ-1g"), # ArianaGrande_VEVO
-                      channel_info_f("UCcdOEjqjiVAnUtEFZIRTlHg"), # IggyAzalea_VEVO
-                      channel_info_f("UCdI8evszfZvyAl2UVCypkTA"), # MileyCyrus_VEVO
-                      channel_info_f("UCVrPiUtl29kULN2HIAm244Q"), # Lord_VEVO
-                      channel_info_f("UCaum3Yzdl3TbBt8YUeUGZLQ"), # NickiMinaj_VEVO
-                      channel_info_f("UCf3cbfAXgPFL6OywH7JwOzA"), # MeghanTrainor_VEVO
-                      channel_info_f("UCjK8ORC71kwyj1DWFwril_A"), # SelenaGomez_VEVO
-                      channel_info_f("UCvu362oukLMN1miydXcLxGg"), # EllieGoulding_VEVO
-                      channel_info_f("UC0sVahwZgKFHjOBaxvm-a7Q"), # ToveLo_VEVO
-                      channel_info_f("UCmKdSrwf1e8coqAzUsrVHZw"), # Sia_VEVO
-                      channel_info_f("UCKTgj8r-wp80wJgDxhc6jpA"), # CarrieUnderwood_VEVO
-                      channel_info_f("UC1EwyHfJHEKnA7kKfcGhlIw"), # AlessiaCara_VEVO
-                      channel_info_f("UCXJDX1KK6t121Z9FLhu5o2A"), # Pink_VEVO
-                      channel_info_f("UCx1f1u4XlFFr0YgqF3wB4lQ"), # JenniferLopez_VEVO
-                      channel_info_f("UCh6C5LG14uZKmwCgGxf-nDQ"), # CelineDion_VEVO
-                      channel_info_f("UClS0wn3LPs9jdX_yt2g1k8w")  # MariahCarrey_VEVO
-                      
-                      )
-library(plotly)
-
-plot_ly(channels_info_geral, x= (~title), y= ~nViews)
-
-```
-
-
-
-```{r}
 videos_stats <- function(data, name){
    data %>% 
    mutate(views = map(videos_stats, .f = 'viewCount')) %>% 
@@ -422,16 +343,274 @@ videos_stats_DivasPop <- rbind(
 #divas_pop <- videos_stats_DivasPop %>%
 #  select(Nome, title, publishedAt, video_id, views)
 #write.csv(divas_pop, "divas_pop.csv", row.names = F)
-#write.csv(resume_divas_pop, "resume_divas_pop.csv", row.names = F)
-# write.csv(channels_info_geral, "channels_info_geral.csv", row.names = F)
+#write.csv(resume_divas_pop, "info_videos_geral.csv", row.names = F)
 
-resume_divas_pop <- videos_stats_DivasPop %>%options(scipen=999)
+
+```
+
+<h2>**Passo 4: pegar as estatísticas do canal**</h2>
+Para essa etapa, vamos precisar implementar 4 funções que pertencem ao pacote tuber, porém estão disponíveis separadamente. Para mais informações, acesse: https://www.rdocumentation.org/packages/tuber/versions/0.7.0/
+
+Primeiro iremos precisar que verifica se o nosso token de acesso é válido. Utilizei a biblioteca httr para requisições HTTP.
+```{r, eval=F}
+#channel info
+library(httr) # funções de requisições http
+
+yt_check_token <- function() {
+	app_token = getOption('google_token')
+    if (is.null(app_token)) stop("Please get a token using yt_oauth().\n")
+
+}
+```
+
+A função tuber_GET faz a requisição GET a aplicação YouTube e retorna uma lista com a resposta da consulta.
+```{r, eval=F}
+tuber_GET <- function(path, query, ...) {
+
+	yt_check_token()
+
+	req <- GET("https://www.googleapis.com", path=paste0("youtube/v3/", path), query=query, config(token = getOption("google_token")), ...)
+	
+	tuber_check(req)
+	res <- content(req)
+	
+	res
+	
+}
+
+```
+
+A função tuber_check solicita a confirmação da resposta da requisição feita na função anterior, em caso de falha uma mensagem de erro é exibida.
+
+```{r, eval=F}
+tuber_check <- function(req) {
+
+  if (req$status_code < 400) return(invisible())
+
+  stop("HTTP failure: ", req$status_code, "\n", call. = FALSE)
+} 
+
+```
+
+Por fim, temos a função que retorna as informações referente ao canal. O parâmentro principal é o id do canal. O escopo da função é o seguinte, verifica-se se o id é um id válido, em caso positivo a requisição a aplicação do YouTube é feita. A resposta é uma lista contendo as informações do canal. Escolhemos as informações que necessitamos, título do canal, números de views, de comentários, de inscritos e de vídeos, e armazenamos em um dataframe. 
+```{r, eval=F}
+get_channel_stats <- function (channel_id = NULL, ...) {
+
+	if (!is.character(channel_id)) stop("Must specify a channel ID.")
+	
+	querylist <- list(part = "statistics,snippet", id = channel_id)
+    
+    raw_res  <- tuber_GET("channels", querylist, ...)
+
+    if (length(raw_res$items) ==0) { 
+    	cat("No channel stats available. Likely cause: Incorrect channel_id. \n")
+    	return(list())
+    }
+
+    res  <- raw_res$items[[1]] 
+    res1 <- res$statistics
+    res2 <- res$snippet
+ 	
+	res <- tibble(title = as.factor(res2$title),
+             nViews = as.numeric(res1$viewCount),
+             nComments = as.numeric(res1$commentCount),
+             nSubscribers = as.numeric(res1$subscriberCount),
+             nVideos = as.numeric(res1$videoCount))
+
+}
+```
+
+Com a configuração necessária para capturar as estatísticas referentes aos canais das cantoras, vamos utilizar as funções descritas acima.
+
+
+```{r, eval=F, echo=F}
+
+channels_ids <- c("UC07Kxew-cMIaykMOkzqHtBQ", # LadyGaga_VEVO
+                  "UC9zX2xZIJ4cnwRsgBpHGvMg", # Beyonce_VEVO
+                  "UC2xskkQVFEpLcGFnNSLQY0A", # Rihanna_VEVO
+                  "UC-8Q-hLdECwQmaWNwXitYDw", # KatyPerry_VEVO
+                  "UCZijND2e2tPp2AQL8Go2YSg", # BritneySpears_VEVO
+                  "UCmQmc-Y4N9btVMUS1BfnyDw", # Madonna_VEVO
+                  "UComP_epzeKzvBX156r6pm1Q", # Adele_VEVO
+                  "UCANLZYMidaCbLQFWXBC95Jg", # TaylorSwift_VEVO
+                  "UC0VOyT2OCBKdQhF3BAbZ-1g", # ArianaGrande_VEVO
+                  "UCcdOEjqjiVAnUtEFZIRTlHg", # IggyAzalea_VEVO
+                  "UCdI8evszfZvyAl2UVCypkTA", # MileyCyrus_VEVO
+                  "UCVrPiUtl29kULN2HIAm244Q", # Lord_VEVO
+                  "UCaum3Yzdl3TbBt8YUeUGZLQ", # NickiMinaj_VEVO
+                  "UCf3cbfAXgPFL6OywH7JwOzA", # MeghanTrainor_VEVO
+                  "UCjK8ORC71kwyj1DWFwril_A", # SelenaGomez_VEVO
+                  "UCvu362oukLMN1miydXcLxGg", # EllieGoulding_VEVO
+                  "UC0sVahwZgKFHjOBaxvm-a7Q", # ToveLo_VEVO
+                  "UCmKdSrwf1e8coqAzUsrVHZw", # Sia_VEVO
+                  "UCKTgj8r-wp80wJgDxhc6jpA", # CarrieUnderwood_VEVO
+                  "UC1EwyHfJHEKnA7kKfcGhlIw", # AlessiaCara_VEVO
+                  "UCXJDX1KK6t121Z9FLhu5o2A", # Pink_VEVO
+                  "UCx1f1u4XlFFr0YgqF3wB4lQ", # JenniferLopez_VEVO
+                  "UCh6C5LG14uZKmwCgGxf-nDQ", # CelineDion_VEVO
+                  "UClS0wn3LPs9jdX_yt2g1k8w"  # MariahCarrey_VEVO
+                  )
+
+```
+
+Criamos um dataset com as informações do canal da Lady Gaga.
+
+```{r, eval=F}
+ladyGaga_info_channel <- channel_info_f("UC07Kxew-cMIaykMOkzqHtBQ"), # LadyGaga_VEVO
+                      
+```
+
+```{r, eval=F, echo=F}
+#criando dataset com as informações dos canais de todas as cantoras
+channels_info_geral <- rbind(
+                      channel_info_f("UC07Kxew-cMIaykMOkzqHtBQ"), # LadyGaga_VEVO
+                      channel_info_f("UC9zX2xZIJ4cnwRsgBpHGvMg"), # Beyonce_VEVO
+                      channel_info_f("UC2xskkQVFEpLcGFnNSLQY0A"), # Rihanna_VEVO
+                      channel_info_f("UC-8Q-hLdECwQmaWNwXitYDw"), # KatyPerry_VEVO
+                      channel_info_f("UCZijND2e2tPp2AQL8Go2YSg"), # BritneySpears_VEVO
+                      channel_info_f("UCmQmc-Y4N9btVMUS1BfnyDw"), # Madonna_VEVO
+                      channel_info_f("UComP_epzeKzvBX156r6pm1Q"), # Adele_VEVO
+                      channel_info_f("UCANLZYMidaCbLQFWXBC95Jg"), # TaylorSwift_VEVO
+                      channel_info_f("UC0VOyT2OCBKdQhF3BAbZ-1g"), # ArianaGrande_VEVO
+                      channel_info_f("UCcdOEjqjiVAnUtEFZIRTlHg"), # IggyAzalea_VEVO
+                      channel_info_f("UCdI8evszfZvyAl2UVCypkTA"), # MileyCyrus_VEVO
+                      channel_info_f("UCVrPiUtl29kULN2HIAm244Q"), # Lord_VEVO
+                      channel_info_f("UCaum3Yzdl3TbBt8YUeUGZLQ"), # NickiMinaj_VEVO
+                      channel_info_f("UCf3cbfAXgPFL6OywH7JwOzA"), # MeghanTrainor_VEVO
+                      channel_info_f("UCjK8ORC71kwyj1DWFwril_A"), # SelenaGomez_VEVO
+                      channel_info_f("UCvu362oukLMN1miydXcLxGg"), # EllieGoulding_VEVO
+                      channel_info_f("UC0sVahwZgKFHjOBaxvm-a7Q"), # ToveLo_VEVO
+                      channel_info_f("UCmKdSrwf1e8coqAzUsrVHZw"), # Sia_VEVO
+                      channel_info_f("UCKTgj8r-wp80wJgDxhc6jpA"), # CarrieUnderwood_VEVO
+                      channel_info_f("UC1EwyHfJHEKnA7kKfcGhlIw"), # AlessiaCara_VEVO
+                      channel_info_f("UCXJDX1KK6t121Z9FLhu5o2A"), # Pink_VEVO
+                      channel_info_f("UCx1f1u4XlFFr0YgqF3wB4lQ"), # JenniferLopez_VEVO
+                      channel_info_f("UCh6C5LG14uZKmwCgGxf-nDQ"), # CelineDion_VEVO
+                      channel_info_f("UClS0wn3LPs9jdX_yt2g1k8w")  # MariahCarrey_VEVO
+                  )
+
+#ordenando dataframe
+channels_info_geral$title <- factor(channels_info_geral$title, levels = unique(channels_info_geral$title)[order(channels_info_geral$nViews, decreasing = TRUE)])
+
+# exportando dataframe
+#write.csv(channels_info_geral, "info_channels_geral.csv", row.names = F)
+```
+
+```{r, echo=F, message=F, warning=F}
+#recebendo dados
+info_geral_videos <- read.csv("dados/info_videos_geral.csv")
+info_geral_channels <- read.csv("dados/info_channels_geral.csv")
+listas <- read.csv("dados/listas.csv")
+
+```
+
+Agora que todas as ferramentas para a coleta dos dados estão prontas, vamos utilizá-las para montar nossos dataset com os dados das maiores cantoras pop do YouTube. Ao analisar as listas da Billboard e da Forbes, selecionei as cantoras que mais apareceram e realizei o processo descrito acima para todas essas cantoras, coletei os dados de seus canais e de seus respectivos vídeos no YouTube, e montei dois datasets com essas informações. 
+
+```{r, message=F, warning=F}
+# informações sobre os canais
+summary(info_geral_channels)
+
+# informações sobre os vídeos
+summary(info_geral_videos)
+```
+
+Finalmente concluímos o processo de captura dos dados, montamos e organizamos os dados, agora é a hora da análise propriamente dita. Vamos lá.
+
+<h2>**Passo 5: As hipóteses**</h2>
+
+<h4>**Hipótese I:** *usando o YouTube para confirmar os rankings da Billboard e Forbes*</h4>
+Muitas pessoas não confiam nos rankins divulgados pelas revistas, acreditam que é uma colocação arquitetada pela indústria da música e empresários, pensando nisso resolvi utilizar os dados do YouTube para tentar aumentar a confiança nessas revistas ou diminuí-la. Irei verificar se os rankings anuais se comparam com os da Billboard e Forbes. Para isso, irei comparar os anos de 2014, 2015 e 2016 (que são os anos em que a Billboard começou a lançar o ranking das artistas mais populares do ano).
+
+No gráfico abaixo, podemos ver o comportamento/mudanças de um ranking para o outro, segundo os dados o YouTube só da match com o ranking da Forbes em 20% casos, já o da Billboard em 60% ocorrências.
+
+```{r, message=F, warning=F,fig.width=10, fig.height=5}
+#funcao que filtra os dados pelo ano e retorna as 10 maiores cantoras em numero de views
+get_top_10 <- function(data, year){
+  res <- data %>%
+    filter(ano == year)
+}
+
+info_2014 <- get_top_10(listas, 2014)
+
+#plot 2014
+
+plot_ly(info_2014, y = ~X, x = ~ano_lista, type = 'scatter', color = info_2014$nome, mode = 'line+markers', 
+        hoverinfo = 'text',
+        text = ~paste('Diva: ', info_2014$nome, 
+                      '</br> Ranking: ', info_2014$ranking,
+                      '</br> nViews: ', info_2014$nViews)) %>%
+  layout(title = "2014: Billboard, Forbes e Youtube ", 
+         xaxis = list(title=""),
+         yaxis = list(title="Ranking"))
+
+
+```
+
+As comparações referentes a 2015 se mantêm constante em relação a 2014, sem muitos acertos/erros entre os rankings.
+```{r, message=F, warning=F,fig.width=10, fig.height=5, echo=F}
+info_2015 <- get_top_10(listas, 2015)
+
+#plot 2015
+
+plot_ly(info_2015, y = ~X, x = ~ano_lista, type = 'scatter', color = info_2015$nome, mode = 'line+markers', 
+        hoverinfo = 'text',
+        text = ~paste('Diva: ', info_2015$nome, 
+                      '</br> Ranking: ', info_2015$ranking,
+                      '</br> nViews: ', info_2015$nViews)) %>%
+  layout(title = "2015: Billboard, Forbes e Youtube ", 
+         xaxis = list(title=""),
+         yaxis = list(title="Ranking"))
+
+
+```
+
+Em 2016 o cenário se altera um pouco, para mais acertos em relação ao YouTube e os outros. YouTube e Forbes 40% de acerto, YouTube e Billboard 70% de acerto.
+```{r, message=F, warning=F,fig.width=10, fig.height=5, echo=F}
+info_2016 <- get_top_10(listas, 2016)
+
+#plot 2016
+
+plot_ly(info_2015, y = ~X, x = ~as.factor(ano_lista), type = 'scatter', color = info_2016$nome, mode = 'line+markers', 
+        hoverinfo = 'text',
+        text = ~paste('Diva: ', info_2016$nome, 
+                      '</br> Ranking: ', info_2016$ranking,
+                      '</br> nViews: ', info_2016$nViews)) %>%
+  layout(title = "2016: Billboard, Forbes e Youtube ", 
+         xaxis = list(title=""),
+         yaxis = list(title="Ranking"))
+
+
+```
+
+Analisando os três cenários descritos acima, cheguei a conclusão que ser a artitas que mais fatura durante o ano (no caso da Forbes), não implica dizer que ela será a mais popular no YouTube , já os resultados referentes a Billboard vemos que se assemelham bastante com os do YouTube. Então, o ranking da Billboard se parece mais com os do YouTube, diferente da Forbes.
+
+<h4>**Hipótese II:** *qual a maior diva em número de visualizações?*</h4>
+	
+<h4>**Hipótese III:** *sabemos que o lançamento dos álbuns reflete um aumento nos seus views e a partir desse evento, podemos dizer qual cantora teve o álbum mais badalado do ano.*</h4>
+
+```{r, eval=F}
+plot_nViewsYouTube <- plot_ly(channels_info_geral, 
+        x = ~title, 
+        y = ~nViews, 
+        type = "bar", 
+        color = ~title) %>%
+  layout(title = "Numero de Views no YouTube - 2008 até 2017",
+         showlegend = FALSE,
+         xaxis = list(title="Divas", tickangle = 45),
+         yaxis = list(title="nº views"))
+```
+
+
+```{r, eval=F}
+resume_divas_pop <- videos_stats_DivasPop %>%
   select(Nome, publishedAt, views) %>%
   unnest(views) %>% 
   mutate(views = as.numeric(views),
          ano =  as.numeric( format( as.Date( publishedAt, origin='1900-1-1'), '%Y')),
          publishedAt = as_date(publishedAt),
-         Nome = as.factor(Nome)) %>% 
+         Nome = as.factor(Nome),
+         likes = map(videos_stats, .f = 'likeCount'),
+         dislikes = map(videos_stats, .f = 'dislikeCount')) %>% 
   group_by(Nome, ano) %>%
   summarise(total_views = sum(views)) %>%
   mutate(ano = as.character(ano))
@@ -439,19 +618,14 @@ resume_divas_pop <- videos_stats_DivasPop %>%options(scipen=999)
 ```
 Numero de views divido por numero de inscritos
 
-```{r}
+```{r, eval=F}
 #visualizações
-library(plotly)
-packageVersion('plotly')
-
 divas_line_chart  <- plot_ly(resume_divas_pop , x = ~ano, y = ~total_views, name = 'Nome', type = 'scatter', color = resume_divas_pop$Nome, mode = 'lines+markers', text = paste(resume_divas_pop$Nome))  %>%
   layout(title = "Resumo Divas Pop - Nº views no YouTube por Ano", 
          xaxis = list(title="Ano"),
          yaxis = list(title="Nº de Views"))
 
 divas_line_chart
-
-plot_ly(resume_divas_pop,x = resume_divas_pop$ano, y = resume_divas_pop$total_views, type = 'line')
 
 divas_bouble_chart <-plot_ly(resume_divas_pop, x = ~ano, y = ~total_views, size= ~total_views, type = 'scatter', color = resume_divas_pop$Nome, mode = 'markers', text = paste(resume_divas_pop$Nome))  %>%
   layout(title = "Resumo Divas Pop - Nº views no YouTube por Ano", 
