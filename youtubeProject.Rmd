@@ -5,32 +5,36 @@ date: "2 de abril de 2017"
 output: html_document
 ---
 
-Todo mundo é viciado em música pop, ou conhece alguém que seja! Seja você fã ou apenas um curioso, já se perguntou quem é a maior diva pop de todos os tempos? Muitos diriam que a resposta é simples e pode ser encontrada nessas listas divulgadas por rádio ou revistas de música, mas dai nos questionamos, de onde vem os dados dessas listas?
+Todo mundo é viciado em música pop, ou conhece alguém que é! Seja você fã ou apenas um curioso, já se perguntou quem é a maior diva pop de todos os tempos? Muitos diriam que a resposta é simples e pode ser encontrada nas listas divulgadas pelas rádios ou revistas de música, mas dai nos questionamos, e como esses rankings são montados? e de onde vem esses dados?
 
-Analisando os últimos lançamento do mundo pop, fiquei curioso para tentar encontrar uma boa resposta para essa pergunta, e para isso decidi analisar os dados da maior plataforma de vídeos da internet, o YouTube. A ideia é coletar os dados dos canais dessas artistas e comparar os resultados com alguns desses rankings divulgados pelas rádios e revistas. E como saber quem são as artistas mais badaladas do mundo? Escolhi a listas da **Billboard:** *Top Artists Female* e da **Forbes:** *Highest-Paid Women in Music*, para embasar minha pesquisa. Analisei quem são as divas que aparece nas duas listas e fiz a coleta dos seus dados.
+Analisando os últimos lançamento do mundo pop, fiquei curioso para tentar encontrar uma boa resposta para essa pergunta, e para isso decidi analisar os dados da maior plataforma de vídeos da internet, o YouTube. A ideia é coletar os dados dos canais dessas artistas e comparar os resultados com alguns desses rankings divulgados pelas rádios e revistas. Mas calma, e como saber quem são as artistas mais badaladas do mundo? Escolhi a listas da **Billboard:** *Top Artists Female* e da **Forbes:** *Highest-Paid Women in Music*, dos últimos três anos para embasar minha pesquisa. Analisei quem são as divas que aparece nas duas listas e montei um conjunto com as 21 divas pop que estiveram presentes nesses rankings.
 
-Desde 2014 a Billboard lança um ranking anual das Top Artists Female, que resume as divas pop do determinado ano. A classificação deles é montada a partir da audiência que os artistas coletados pela **Nielsen Music** (para saber mais sobre eles clique [aqui] (http://www.nielsen.com/us/en/about-us.html) ) e dados dos streaming de música on-line. Já a Forbes, lança anualmente um ranking das artistas mais bem pagas. (*Its about money!*) O papo agora é se a fortuna das divas refletem sua popularidade no YouTube.
+Desde 2014 a Billboard lança um ranking anual das Top Artists Female, que resume as divas pop do determinado ano. A classificação deles é montada a partir da audiência que os artistas coletados pela **Nielsen Music** ( para saber mais sobre eles clique [aqui](http://www.nielsen.com/us/en/about-us.html) ) e dados dos streaming de música on-line. Já a Forbes, lança anualmente um ranking das artistas mais bem pagas. (*Its about money!*) O papo agora é se a fortuna das divas refletem sua popularidade no YouTube.
 
-Mesmo sendo um little monster fiel, tenho que ser um analista imparcial e procurar a melhor forma de descobrir qual a maior diva pop de todos os tempos. Fiz um scraper de informações nos canais oficiais das maiores cantoras, segundo as listas descritas acima, e montei algumas visualizações que me ajudaram a ter uma resposta mais elaborada para essa pergunta. 
+Mesmo sendo um little monster fiel, tenho que ser um analista imparcial e procurar a melhor forma de descobrir *qual a maior diva pop de todos os tempos*. Para isso, a partir da lista que montei, fiz um scraper de informações dos seus canais oficiais, e fiz algumas análises e montei umas visualizações que me ajudaram a ter uma resposta mais elaborada para essa pergunta. 
 
-Para capturar os dados do youtube utilizei como tutorial uma análise feita por Willian, disponível no site curso-r.com, sobre o canal Porta dos Fundos. Abaixo segue o passo a passo que o Willian fez, com algumas modificações minhas.
+Para capturar os dados do YouTube utilizei o pacote **tuberr**. Segui alguns tutorais de como extrair esses dados, como a análise disponível no site [curso-r.com](http://curso-r.com/blog/2017/03/20/2017-03-20-porta-dos-fundos-decadencia/) sobre o canal Porta dos Fundos.
 
-Para montarmos nosso dataset precisamos dos dados dos canais das artistas. Utilizarei o pacote tube r que permite acessar a API do YouTube utilizando o R. Assim, teremos acesso a diversas estatísticas como número de likes, quantidade de views, comentários e etc.
+Minha análise está divida em duas partes, o processo de captura dos dados e sua análise.
+
+Para montarmos nosso dataset precisamos dos dados dos canais das artistas. O pacote tuber que permite acessar a API do YouTube utilizando o R/RStudio. Assim, teremos acesso a estatíticas que precisamos como número de likes, quantidade de views, comentários e etc.
 
 <h2>**Passo 1: instalar e configurar o pacote tuber**</h2>
 
-Para install.packages(“tuber”) ou para obter a versão de desenvolvimento atual do GitHub devtools::install_github("soodoku/tuber", build_vignettes = TRUE).  Lembrando de instalar o pacote install.packages(“devtools”).
+Instale o pacote 'devtools' para obter a versão mais atual do tuber disponível no [GitHub](https://github.com/soodoku/tuber).
 
 ```{r, eval=F, message=F, warning=F}
-install.packages('devtools')
+#install.packages('devtools')
 library(devtools)
+
+#versão mais recente do pacote
 devtools::install_github("soodoku/tuber", build_vignettes = TRUE)
 
 #carregando bibliotecas necessarias
 library(tuber)  # Acesso a API do YouTube
 ```
 
-Precisamos agora fazer a autenticação com o YouTube, é necessário um id e um secret. Para saber como fazer isso, siga o passo a passo disponível em Configurando API YouTube https://developers.google.com/youtube/v3/getting-started
+Agora, precisamos agora fazer a autenticação com o YouTube, é necessário um id e um secret. Para saber como fazer isso, siga o passo a passo disponível em [Configurando API YouTube](https://developers.google.com/youtube/v3/getting-started)
 Com seu id e secret em mão, agora vamos configurar o acesso do tuber à API.
 
 ```{r, eval=F, echo=F}
@@ -45,7 +49,7 @@ yt_oauth(app_id = "id_secret",
         app_secret = "toke_secret")
 ```
 
-Se tudo ocorrer bem, após rodar o código acima, uma janela será aberta no seu navegador confirmando a autenticação, após isso você pode voltar para o R e iniciar os trabalhos.
+Se tudo ocorrer bem, após rodar o código acima, uma janela será aberta no seu navegador confirmando a autenticação, após isso você pode voltar para o RStudio e iniciar os trabalhos.
 
 ```{r, message=F, warning=F}
 #carregando biblitotecas extras
@@ -54,7 +58,6 @@ library(tibble)       # Criação de dataframes
 library(lubridate)    # Manipulação de datas
 library(purrr)        # Funcionais
 library(plotly)       # Gráficos
-library(tidyr)
 ```
 
 ```{r, eval=F, echo=F}
@@ -86,26 +89,23 @@ library(tidyr)
 
 <h2>**Passo 2: buscar os ids dos canais das cantoras**</h2>
 
-Precisamos do id do canal de cada cantora, conseguimos essa informação na url do youtube https://www.youtube.com/channel/<channel_id>. 
+Precisamos do id do canal de cada cantora, conseguimos essa informação na url do youtube *www.youtube.com/channel/<**channel_id**>*. 
 
-A Função tuber:: yt_search() pesquisa por videos e sua informações. Mais detalhes sobre a biblioteca tuber https://github.com/soodoku/tuber.
-Por default, a função yt_search() possui um número máximo de requisições, 50 no total. Mas não desanime, podemos configurá-la setando seus parâmetros type = “video” e channel_id = “id_de_algum_canal”, o número de requisições passa para 500 resultados.
-Para facilitar e automatizar nosso trabalho, adaptei a função get_videos() disponível em <>. Ela recebe uma data de início e de término (em um dataframe com apenas uma linha) e o id_do_canal (em formtato de string) e devolve todos os vídeos do canal nesse período. 
+A Função *tuber:: yt_search()* pesquisa por videos e sua informações. Mais detalhes sobre a biblioteca [tuber](https://github.com/soodoku/tuber).
+Por default, a função *yt_search()* possui um número máximo de requisições, 50 no total. Mas não desanime, podemos configurá-la setando seus parâmetros *type = “video”* e *channel_id = “id_de_algum_canal”*, o número de requisições passa para 500 resultados.
+Para facilitar e automatizar nosso trabalho, adaptei a função *get_videos()* que recebe como parâmetro um dataset contendo datas de início e de término (em um dataframe com apenas uma linha) e o id_do_canal (em formtato de string) e devolve todos os vídeos do canal nesse período. 
 
 ```{r, eval=F}
 get_videos <- function(dates, id_channel) {
-  
   yt_search(term = "", 
             type = "video",
             channel_id = id_channel,
             published_after = dates$start,
             published_before = dates$end)
-  
 }
-
 ```
 
-Cada linha do dataframe de datas a seguir representa períodos de um ano, de 2009 a 2017. (2009 porque foi o ano em que a primeira cantora ingressou no YouTube). O mutate formata as datas no padrão exigido pela função yt_search(). Veja help(yt_search) para mais informações.
+Cada linha do dataframe de datas representa períodos de um ano, de 2009 a 2017. (2009 porque foi o ano em que a primeira cantora (Katy Perry) ingressou no YouTube). O mutate formata as datas no padrão exigido pela função *yt_search()*. Veja *help(yt_search)* para mais informações.
 
 ```{r, eval=F}
 dates <- tibble(start = seq(ymd("2008-01-01"), ymd("2017-01-01"), by = "years"),
@@ -115,7 +115,7 @@ dates <- tibble(start = seq(ymd("2008-01-01"), ymd("2017-01-01"), by = "years"),
 
 ```
 
-Por fim, atribuímos ao objeto videos as informações de todos os vídeos da cantora em seu respectivo canal de 2009 até 2017. (Caso não possua vídeos nesse perído uma lista vazia será retornada). Por exemplo, vamos pegar as informações dos vídeos das cantoras, Lady Gaga. O mesmo passo será realizado para as demais artistas.
+Por fim, atribuímos ao objeto videos as informações de todos os vídeos do canal da cantora de 2008 até 2017. (Caso não possua vídeos nesse perído uma lista vazia será retornada). Por exemplo, vamos pegar as informações dos vídeos das cantoras, Lady Gaga. O mesmo passo será realizado para as demais artistas.
 
 ```{r, eval=F}
 videos_gaga <- by_row(.d = dates, "UC07Kxew-cMIaykMOkzqHtBQ", ..f = get_videos, .to = "videos_info")
@@ -150,7 +150,7 @@ videos_mariah <- by_row(.d = dates, "UClS0wn3LPs9jdX_yt2g1k8w", ..f = get_videos
 
 <h2>**Passo 3: pegar as estatísticas de cada vídeo do canal**</h2>
 
-Precisamos das estatísticas dos vídeos, para isso utilizei a função get_videos_stats() disponível em <> que recebe um dataframe de uma linha contendo uma coluna $video_id e, usando a função tuber::get_stats(), faz o scrape das estatísticas do vídeo. 
+Precisamos das estatísticas dos vídeos, para isso utilizei a função *get_videos_stats()* que recebe um dataframe de uma linha contendo uma coluna *$video_id* e usando a função *tuber::get_stats()*, faço o scrape das estatísticas do vídeo. 
 
 ```{r, eval=F}
 #pegando estatísticas dos vídeos
@@ -160,7 +160,7 @@ get_videos_stats <- function(df_row) {
 
 ```
 
-Hora de montar os datasets. Cada elemento da coluna video_info contém um dataframe com as informações dos vídeos de um determinado ano. Utilizando a função dplyr::bind_rows(), juntamos esses dataframes em um só. Selecionamentos apenas as colunas de nosso interesse: title, publishedAt e video_id. Por fim, utilizamos os id’s para baixar as estatítisca de cada vídeo usando a função get_videos_stats(). As estatísticas são salvas na coluna $vídeos_stats do objeto dados. 
+Hora de montar os datasets. Cada elemento da coluna *video_info* contém um dataframe com as informações dos vídeos de um determinado ano. Utilizando a função *dplyr::bind_rows()*, junteo esses dataframes em um só. Selecionamentos apenas as colunas de nosso interesse: *title*, *publishedAt* e *video_id*. Por fim, utilizei os id’s para baixar as estatítisca de cada vídeo usando a função *get_videos_stats()*. As estatísticas são salvas na coluna *$vídeos_stats* do dataframe resultado. 
 
 ```{r, eval=F}
 dados_gaga <- bind_rows(videos_gaga$videos_info) %>% 
@@ -349,9 +349,10 @@ videos_stats_DivasPop <- rbind(
 ```
 
 <h2>**Passo 4: pegar as estatísticas do canal**</h2>
-Para essa etapa, vamos precisar implementar 4 funções que pertencem ao pacote tuber, porém estão disponíveis separadamente. Para mais informações, acesse: https://www.rdocumentation.org/packages/tuber/versions/0.7.0/
+O pacote tuber possui diversas funções disponíveis no pacote, porém outras funções úteis estão disponíveis separadamente. Para conhecer esse conjunto de funções extras acesse [<>](https://github.com/soodoku/tuber/tree/master/man).
+Para essa etapa, vamos precisar implementar 4 funções que pertencem ao pacote tuber, porém estão disponíveis separadamente. Para mais informações [<>](https://www.rdocumentation.org/packages/tuber/versions/0.7.0/)
 
-Primeiro iremos precisar que verifica se o nosso token de acesso é válido. Utilizei a biblioteca httr para requisições HTTP.
+Primeiro iremos precisar que verifica se o nosso token de acesso é válido. Utilizei a biblioteca *httr* para requisições HTTP.
 ```{r, eval=F}
 #channel info
 library(httr) # funções de requisições http
@@ -363,7 +364,7 @@ yt_check_token <- function() {
 }
 ```
 
-A função tuber_GET faz a requisição GET a aplicação YouTube e retorna uma lista com a resposta da consulta.
+A função *tuber_GET* faz a requisição *GET* a aplicação YouTube e retorna uma lista com a resposta da consulta.
 ```{r, eval=F}
 tuber_GET <- function(path, query, ...) {
 
@@ -380,7 +381,7 @@ tuber_GET <- function(path, query, ...) {
 
 ```
 
-A função tuber_check solicita a confirmação da resposta da requisição feita na função anterior, em caso de falha uma mensagem de erro é exibida.
+A função *tuber_check* solicita a confirmação da resposta da requisição feita na função anterior, em caso de falha uma mensagem de erro é exibida.
 
 ```{r, eval=F}
 tuber_check <- function(req) {
@@ -392,7 +393,8 @@ tuber_check <- function(req) {
 
 ```
 
-Por fim, temos a função que retorna as informações referente ao canal. O parâmentro principal é o id do canal. O escopo da função é o seguinte, verifica-se se o id é um id válido, em caso positivo a requisição a aplicação do YouTube é feita. A resposta é uma lista contendo as informações do canal. Escolhemos as informações que necessitamos, título do canal, números de views, de comentários, de inscritos e de vídeos, e armazenamos em um dataframe. 
+Por fim, temos a função que retorna as informações referentes ao canal. O parâmentro principal é o id do canal. O escopo da função é o seguinte: verifica-se se o id é um id válido, em caso positivo a requisição a aplicação do YouTube é feita. A resposta é uma lista contendo as informações do canal. Escolhemos as informações que necessitamos, título do canal, números de views, de comentários, de inscritos e de vídeos, e armazenamos em um dataframe. 
+
 ```{r, eval=F}
 get_channel_stats <- function (channel_id = NULL, ...) {
 
@@ -420,8 +422,7 @@ get_channel_stats <- function (channel_id = NULL, ...) {
 }
 ```
 
-Com a configuração necessária para capturar as estatísticas referentes aos canais das cantoras, vamos utilizar as funções descritas acima.
-
+Com as configurações necessárias para capturar as estatísticas referentes aos canais das cantoras, vamos utilizar as funções descritas acima para realizar a coleta dos dados..
 
 ```{r, eval=F, echo=F}
 
@@ -496,6 +497,7 @@ channels_info_geral$title <- factor(channels_info_geral$title, levels = unique(c
 #write.csv(channels_info_geral, "info_channels_geral.csv", row.names = F)
 ```
 
+
 ```{r, echo=F, message=F, warning=F}
 #recebendo dados
 info_geral_videos <- read.csv("dados/info_videos_geral.csv")
@@ -504,7 +506,7 @@ listas <- read.csv("dados/listas.csv")
 
 ```
 
-Agora que todas as ferramentas para a coleta dos dados estão prontas, vamos utilizá-las para montar nossos dataset com os dados das maiores cantoras pop do YouTube. Ao analisar as listas da Billboard e da Forbes, selecionei as cantoras que mais apareceram e realizei o processo descrito acima para todas essas cantoras, coletei os dados de seus canais e de seus respectivos vídeos no YouTube, e montei dois datasets com essas informações. 
+Agora que todas as ferramentas para a coleta dos dados estão prontas, vamos utilizá-las para montar nossos dataset com os dados das cantoras pop do YouTube. 
 
 ```{r, message=F, warning=F}
 # informações sobre os canais
@@ -514,12 +516,12 @@ summary(info_geral_channels)
 summary(info_geral_videos)
 ```
 
-Finalmente concluímos o processo de captura dos dados, montamos e organizamos os dados, agora é a hora da análise propriamente dita. Vamos lá.
+Finalmente concluímos o processo de captura organização e montagem dos dados, agora é a hora da análise propriamente dita. Vamos lá.
 
 <h2>**Passo 5: As hipóteses**</h2>
 
 <h4>**Hipótese I:** *usando o YouTube para confirmar os rankings da Billboard e Forbes*</h4>
-Muitas pessoas não confiam nos rankins divulgados pelas revistas, acreditam que é uma colocação arquitetada pela indústria da música e empresários, pensando nisso resolvi utilizar os dados do YouTube para tentar aumentar a confiança nessas revistas ou diminuí-la. Irei verificar se os rankings anuais se comparam com os da Billboard e Forbes. Para isso, irei comparar os anos de 2014, 2015 e 2016 (que são os anos em que a Billboard começou a lançar o ranking das artistas mais populares do ano).
+Muitas pessoas não confiam nos rankins divulgados pelas revistas, acreditam que é uma colocação arquitetada pela indústria da música e empresários e teorias da conspiração, pensando nisso resolvi utilizar os dados do YouTube para tentar aumentar (ou diminuir) a confiança nessas revistas. Criarei um ranking anual do YouTube e farei a comparação com os rankings da Billboard e Forbes.
 
 No gráfico abaixo, podemos ver o comportamento/mudanças de um ranking para o outro, segundo os dados o YouTube só da match com o ranking da Forbes em 20% casos, já o da Billboard em 60% ocorrências.
 
@@ -543,7 +545,6 @@ plot_ly(info_2014, y = ~X, x = ~ano_lista, type = 'scatter', color = info_2014$n
          xaxis = list(title=""),
          yaxis = list(title="Ranking"))
 
-
 ```
 
 As comparações referentes a 2015 se mantêm constante em relação a 2014, sem muitos acertos/erros entre os rankings.
@@ -560,7 +561,6 @@ plot_ly(info_2015, y = ~X, x = ~ano_lista, type = 'scatter', color = info_2015$n
   layout(title = "2015: Billboard, Forbes e Youtube ", 
          xaxis = list(title=""),
          yaxis = list(title="Ranking"))
-
 
 ```
 
@@ -579,13 +579,12 @@ plot_ly(info_2015, y = ~X, x = ~as.factor(ano_lista), type = 'scatter', color = 
          xaxis = list(title=""),
          yaxis = list(title="Ranking"))
 
-
 ```
 
-Analisando os três cenários descritos acima, cheguei a conclusão que ser a artitas que mais fatura durante o ano (no caso da Forbes), não implica dizer que ela será a mais popular no YouTube , já os resultados referentes a Billboard vemos que se assemelham bastante com os do YouTube. Então, o ranking da Billboard se parece mais com os do YouTube, diferente da Forbes.
+Analisando os três cenários descritos acima, cheguei a conclusão que estar dentre as artitas que mais faturaram durante o ano (no caso da Forbes), não implica dizer que ela será a mais popular no YouTube, já os resultados referentes a Billboard vemos que se assemelham bastante com os do YouTube. Sobre a confiança nesses rankings, o da Forbes não tem muita discussão, já que é montado com base nos lucros das cantoras, já o da Billboard é bastante semelhante com o do YouTube, o que nos passa uma confiança maior.
 
 <h4>**Hipótese II:** *qual a maior diva pop do YouTube?*</h4>
-Utilizei uma métrica estatística simples, a média de views por número de vídeos. Iremos ver quem, dentre as maiores divas da música pop, é que possui mais views por vídeo. 
+Utilizei uma estatística simples, a média de views por número de vídeos. Iremos ver quem, dentre as maiores divas da música pop, é que possui mais views por vídeo. 
 
 ```{r, message=F, warning=F,fig.width=10, fig.height=5}
 info_geral_channels <- info_geral_channels %>%
@@ -605,9 +604,10 @@ plot_ly(info_geral_channels,
          showlegend = FALSE,
          xaxis = list(title="Divas", tickangle = 50),
          yaxis = list(title="nº views"))
+
 ```
 
-Segundo os dados, as colocações no nosso ranking mudaram, dentre os 21 canais das 21 maiores divas de todos os tempos (2008-2017), Adele possui uma média de, quase 183 milhões de views por vídeo, seguida pela Taylor Swift com quase 145 milhões de views em cada um dos seus 77 videos. Essa métrica não é muito confiável, visto que a quantidade de vídeos é bastante diferente entre os canais. Por isso, olhei mais umas informações para tentar encontrar a maior ou as maiores divas do YouTube. 
+Segundo os dados, as colocações no nosso ranking mudaram, dentre os 21 canais das 21 maiores divas de todos os tempos (2008-2017), Adele possui uma média de, quase 183 milhões, views em seus 33 vídeos, seguida pela Taylor Swift com quase 145 milhões de views em cada um dos seus 77 videos. Essa métrica não é muito confiável, visto que a quantidade de vídeos é  diferente entre os canais. Por isso, analisei outras informações para tentar encontrar a maior ou as maiores divas do YouTube. 
 
 ```{r, message=F, warning=F,fig.width=10, fig.height=5}
 #ordenando
@@ -625,6 +625,7 @@ plot_ly(info_geral_channels,
          showlegend = FALSE,
          xaxis = list(title="", tickangle = 50),
          yaxis = list(title="nº views"))
+
 ```
 
 
@@ -633,7 +634,7 @@ Temos agora algumas mudanças, mas o cenário continua parecido. Dessa vez, a ma
 
 <h4>**Panorama Geral** *histórico das divas no YouTube*</h4>
 
-No gŕafico abaixo, é possível visualizar todo o histórico de das 20 maiores cantoras pops da história do YouTube.
+No gŕafico abaixo, é possível visualizar todo o histórico de das 21 maiores cantoras pops da história do YouTube.
 ```{r, message=F, warning=F,fig.width=10, fig.height=5}
 #visualizações
 plot_ly(info_geral_videos , x = ~ano, y = ~total_views, name = 'Nome', type = 'scatter', color = info_geral_videos$Nome, mode = 'lines+markers', text = paste(info_geral_videos$Nome))  %>%
@@ -644,6 +645,7 @@ plot_ly(info_geral_videos , x = ~ano, y = ~total_views, name = 'Nome', type = 's
 ```
 
 É possível marcar ou desmarcar o nome da artista, o que ajuda a fazer comparações.
+
 Temos agora outra visualização sobre o histórico dos canais das Divas no YouTube.
 
 ```{r, message=F, warning=F,fig.width=10, fig.height=5}
@@ -651,10 +653,12 @@ plot_ly(info_geral_videos, x = ~ano, y = ~total_views, size= ~total_views, type 
   layout(title = "Resumo Divas Pop - Nº views no YouTube por Ano", 
          xaxis = list(title="Ano"),
          yaxis = list(title="Nº de Views"))
+
+
 ```
 
 <h2>**Conclusões**</h2>
-O tema não é algo de extrema importância para humanidade, mas para quem gosta de música pop e tem sua diva preferida tem disponível novos argumentos para as intermináveis discussões nas redes sociais da vida. O interessante desse trabalho é aprender a mexer nessa ferramenta incrível que é o RStudio, utilizando bibliotecas fantásticas e aprendendo a integrar com a API de uma plataforma mundialmente conhecida e acessada por todos nós. O código está disponível e você pode brincar com os dados dos seus canais favoritos, fazendo análises, comparações e descobrindo fatos curiosos.
+O tema não é algo de extrema importância para humanidade, mas para quem gosta de música pop e tem sua diva preferida, possui agora novos argumentos para as intermináveis discussões sobre quem é a melhor, nas redes sociais da vida. O interessante desse trabalho é aprender a mexer nessa ferramenta incrível que é o RStudio, utilizando bibliotecas fantásticas e aprendendo a integrar com a API de uma plataforma mundialmente conhecida e acessada por todos nós. O código está disponível e você pode brincar com os dados dos seus canais favoritos, fazendo análises, comparações e descobrindo fatos curiosos.
 
 E se sua diva não apareceu aqui, não fique triste, futuramente ela aparecerá nos rankings mundiais :) 
 

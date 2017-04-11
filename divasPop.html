@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Theme CSS -->
+    <link href="css/clean-blog.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    Menu <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand" href="index.html">Start Bootstrap</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="index.html">Home</a>
+                    </li>
+                    <li>
+                        <a href="about.html">About</a>
+                    </li>
+                    <li>
+                        <a href="post.html">Sample Post</a>
+                    </li>
+                    <li>
+                        <a href="contact.html">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header class="intro-header" style="background-image: url('img/divaspop.jpg')">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <div class="post-heading">
+                        <h1>Qual é a maior Diva Pop de todos os tempos?</h1>
+                        <h2 class="subheading">Analisando os dados do YouTube</h2>
+                        <span class="meta">Posted by <a href="#">Arthur Lustosa</a> on Abril 15, 2017</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <p>Todo mundo é viciado em música pop, ou conhece alguém que é! Seja você Little Monster, servos da Queen B ou Katycats, já se perguntou quem é a maior diva pop de todos os tempos. Claro que, dependendo da sua diva master, você irá defendê-la com unhas, dentes, garras ou lançadores de purpurina, e vai clamar que é a sua diva a maior de todos os tempos. Pensando nisso, tentei responder essa questão que se arrasta desde os primórdios da era pop. </p>
+
+                    <h2 class="section-heading">Os dados</h2>
+
+                    <p>Para isso, fui analisar as listas que os tablóides mundiais soltam todos os anos. Dentre eles, selecionei a lista da Billboard - Top Artists Female e da Forbes - Highest-Paid Women in Music, mas como todxs desconfiamos das fontes que esses ditadores mundiais soltam, resolvi coletar os dados de uma plataforma utilizada por todxs, o YouTube, e analisar a quantidade de views que cada uma das divas mundiais possuem em seus canais, em outras palavras, vamos tentar mostrar quem é a maior diva pop segundo o número de visualizações no YouTube. Mas antes, vamos ficar mais por dentro das listas citadas acima.</p>
+
+                    <blockquote>Para você que se interessa por estatísticas, análise de dados ou é um ariano (ou taurino) teimoso  que só acredita vendo, o passo a passo desde coleta até análise dos dados está disponível aqui <a href="rpubs.com/arthurlustosa"><></a></blockquote>
+
+                    <h2 class="section-heading">Os tablóides</h2>
+
+                    <p>Desde 2014 a Billboard lança um ranking anual das Top Artists Female, que resume as divas pop do determinado ano. A classificação deles é montada a partir da audiência que os artistas coletados pela <a href="http://www.nielsen.com/us/en/about-us.html">Nielsen Music</a> e dados dos streaming de música on-line.</p>
+                    <p>Já a Forbes, lança anualmente um ranking das artistas mais bem pagas.</p>
+                    <p>(Its about money!)</p>
+
+                    <a href="#">
+                        <iframe src="//giphy.com/embed/sN0XTrok51bzi" width="100%" height="286.65330661322645" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/beyonce-money-fan-sN0XTrok51bzi"></a></p>
+                    </a>
+
+                    <p>O papo agora é se a fortuna das divas refletem sua popularidade no YouTube.</p>
+
+                    <h4 class="section-heading">A análise</h4>
+
+                    <p>O que essas listas têm a nos dizer em relação a quem é a maior Diva Pop de todos os tempos? Pois bem, analisando os dados do YouTube queremos saber se a lista da Billboard realmente está nos mostrando as divas do ano e se a diva mais rica realmente é aquela que todo mundo ama.</p>
+
+                    <p>Para chegamos as nossas conclusões finais, vou levantar algumas hipóteses que prentendemos confirmá-las ou refutá-las. </p>
+
+                    <blockquote>Um detalhe importante sobre nossa análise, os dados do YouTube são acumulativos, o que isso quer dizer? Por exemplo, a Beyoncé lançou um vídeo em 2009, nossa coleta capturou todos os views que esse vídeo teve desde a sua postagem até hoje.</blockquote>
+
+                    <h4 class="section-heading">As hipóteses</h4>
+                    <h2 class="section-heading">Hipótese I: </h2><blockquote>usando o YouTube para confirmar os rankings da Billboard e Forbes</blockquote>
+                    <p>Muitas pessoas não confiam nos rankins divulgados pelas revistas, acreditam que é uma colocação arquitetada pela indústria da música e empresários e teorias da conspiração, pensando nisso resolvi utilizar os dados do YouTube para tentar aumentar (ou diminuir) a confiança nessas revistas. Criarei um ranking anual do YouTube e farei a comparação com os rankings da Billboard e Forbes.</p>
+
+                    <p>No gráfico abaixo, podemos ver o comportamento/mudanças de um ranking para o outro, segundo os dados, em 2014, o YouTube só da match com o ranking da Forbes em 20% casos, já o da Billboard em 60% ocorrências.</p>
+                </div>
+            </div>
+
+            <!-- Plot 2014 -->
+            <div style="margin: 0 auto; width:100%; height:600px;">
+              <object type="text/html" data="graficos/plot2014.html"
+                      style="width:100%; height:100%; margin:1%;">
+              </object>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                  <p>As comparações referentes a 2015 se mantêm constante em relação a 2014, sem muitos acertos/erros entre os rankings.</p>
+                </div>
+            </div>
+
+            <!-- Plot 2015 -->
+            <div style="margin: 0 auto; width:100%; height:600px;">
+              <object type="text/html" data="graficos/plot2015.html"
+                      style="width:100%; height:100%; margin:1%;">
+              </object>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                  <p>Em 2016 o cenário se altera um pouco, para mais acertos em relação ao YouTube e os outros. YouTube e Forbes 40% de acerto, YouTube e Billboard 70% de acerto.</p>
+                </div>
+            </div>
+
+            <!-- Plot 2016 -->
+            <div style="margin: 0 auto; width:100%; height:600px;">
+              <object type="text/html" data="graficos/plot2016.html"
+                      style="width:100%; height:100%; margin:1%;">
+              </object>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                  <p>Analisando os três cenários descritos acima, cheguei a conclusão que estar dentre as artistas que mais faturaram durante o ano (no caso da Forbes), não implica dizer que ela será a mais popular no YouTube, já os resultados referentes a Billboard vemos que se assemelham bastante com os do YouTube. Sobre a confiança nesses rankings, o da Forbes não tem muita discussão, já que é montado com base nos lucros das cantoras, já o da Billboard é bastante semelhante com o do YouTube, o que nos passa uma confiança maior.</p>
+
+                  <h2 class="section-heading">Hipótese II: </h2><blockquote>qual a maior diva pop do YouTube?</blockquote>
+                  <p>Utilizei uma estatística simples, a média de views por número de vídeos. Iremos ver quem, dentre as maiores divas da música pop, é que possui mais views por vídeo.</p>
+
+                </div>
+            </div>
+
+            <!-- Plot Media Views Por Video -->
+            <div style="margin: 0 auto; width:100%; height:600px;">
+              <object type="text/html" data="graficos/mediaViewsPorVideo.html"
+                      style="width:100%; height:100%; margin:1%;">
+              </object>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                  <p>Segundo os dados, as colocações no nosso ranking mudaram, dentre os 21 canais das 21 maiores divas de todos os tempos (2008-2017), Adele possui uma média de, quase 183 milhões, views em seus 33 vídeos, seguida pela Taylor Swift com quase 145 milhões de views em cada um dos seus 77 videos. Essa métrica não é muito confiável, visto que a quantidade de vídeos é  diferente entre os canais. Por isso, analisei outras informações para tentar encontrar a maior ou as maiores divas do YouTube. </p>
+                </div>
+            </div>
+
+            <!-- Plot Numero de Views do Canal -->
+            <div style="margin: 0 auto; width:100%; height:600px;">
+              <object type="text/html" data="graficos/nViewsPorCanal-bubble.html"
+                      style="width:100%; height:100%; margin:1%;">
+              </object>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                  <p>Temos agora algumas mudanças, mas o cenário continua parecido. Dessa vez, a maior diva do YouTube, segundo a quantidade de views, é Katy Perry com quase 11,5 bilhão de views em seu canal, seguida pela Taylor Swift com 11B de views e depois a Rihanna com 11B de views e logo depois a Beyoncé com quase 7 B de views em seu canal. </p>
+
+                  <h2 class="section-heading">Panorama geral: </h2><blockquote>histórico das divas no YouTube</blockquote>
+                </div>
+            </div>
+
+            <div style="margin: 0 auto; width:100%; height:600px;">
+              <object type="text/html" data="graficos/resumoHistoricoDeViewsPorAno.html"
+                      style="width:100%; height:100%; margin:1%;">
+              </object>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                  <p>É possível marcar ou desmarcar o nome da artista, o que ajuda a fazer comparações.</p>
+
+                  <p>Temos agora outra visualização sobre o histórico dos canais das Divas no YouTube. </p>
+                </div>
+            </div>
+
+            <div style="margin: 0 auto; width:100%; height:600px;">
+              <object type="text/html" data="graficos/historicoDeViewsPorAno.html"
+                      style="width:100%; height:100%; margin:1%;">
+              </object>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <h2 class="section-heading">Conclusões </h2><blockquote>aprendizados e etc</blockquote>
+                  <p>É possível marcar ou desmarcar o nome da artista, o que ajuda a fazer comparações.</p>
+
+                </div>
+            </div>
+
+        </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <ul class="list-inline text-center">
+                        <li>
+                            <a href="https://twitter.com/arthurlustosa_">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.facebook.com/arthur.lustosa">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/arthurlustosa">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                    <p class="copyright text-muted">Copyright &copy; Your Website 2016</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Contact Form JavaScript -->
+    <script src="js/jqBootstrapValidation.js"></script>
+    <script src="js/contact_me.js"></script>
+
+    <!-- Theme JavaScript -->
+    <script src="js/clean-blog.min.js"></script>
+
+</body>
+
+</html>
