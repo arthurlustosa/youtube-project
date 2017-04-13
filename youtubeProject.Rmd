@@ -1,8 +1,11 @@
 ---
 title: "Divas Pop segundo o YouTube"
 author: "Arthur Lustosa de Souza"
-date: "2 de abril de 2017"
-output: html_document
+date: "13 de abril de 2017"
+output: 
+  html_document:
+    toc : true
+    toc_float: true
 ---
 
 Todo mundo é viciado em música pop, ou conhece alguém, ou tem uma prima/o ou tia/o que é!
@@ -14,13 +17,13 @@ Desde 2014 a Billboard lança um ranking anual das Top Artists Female, que resum
 
 Mesmo sendo um little monster fiel, tenho que ser um analista imparcial e procurar a melhor forma de descobrir *qual a maior diva pop de todos os tempos*. Para isso, a partir da lista que montei, fiz um scraper de informações dos seus canais oficiais, e fiz algumas análises e montei umas visualizações que me ajudaram a ter uma resposta mais elaborada para essa pergunta. 
 
-Para capturar os dados do YouTube utilizei o pacote **tuberr**. Segui alguns tutorais de como extrair esses dados, como a análise disponível no site [curso-r.com](http://curso-r.com/blog/2017/03/20/2017-03-20-porta-dos-fundos-decadencia/) sobre o canal Porta dos Fundos.
+Para capturar os dados do YouTube utilizei o pacote **tuber**. Segui alguns tutorais de como extrair esses dados, como a análise disponível no site [curso-r.com](http://curso-r.com/blog/2017/03/20/2017-03-20-porta-dos-fundos-decadencia/) sobre o canal Porta dos Fundos.
 
 Minha análise está divida em duas partes, o processo de captura dos dados e sua análise.
 
 Para montarmos nosso dataset precisamos dos dados dos canais das artistas. O pacote tuber que permite acessar a API do YouTube utilizando o R/RStudio. Assim, teremos acesso a estatíticas que precisamos como número de likes, quantidade de views, comentários e etc.
 
-<h2>**Passo 1: instalar e configurar o pacote tuber**</h2>
+##<h2>**Passo 1: instalar e configurar o pacote tuber**</h2>
 
 Instale o pacote 'devtools' para obter a versão mais atual do tuber disponível no [GitHub](https://github.com/soodoku/tuber).
 
@@ -40,8 +43,8 @@ Com seu id e secret em mão, agora vamos configurar o acesso do tuber à API.
 
 ```{r, eval=F, echo=F}
 #autenticando com youtube 
-yt_oauth(app_id = "75896210182-3rmjt1ejj59q3hf51dakpd41pn1mdv8e.apps.googleusercontent.com",
-        app_secret = "E9UO47eqk_21CkUfJcRJu3fB")
+yt_oauth(app_id = "xxxx",
+        app_secret = "xxxxx")
 ```
 
 ```{r, eval=F, }
